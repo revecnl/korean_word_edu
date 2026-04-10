@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>단어 수정 가능 랜덤 룰렛</title>
+    <style>
+        :root {
+            --slot-height: 80px;
+            --spin-time: 2s;
+            --font-size-main: 1.4rem;
+        }
+
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 0;
+            color: #333;
+        }
+
+        .main-layout {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .slot-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slot-machine {
+            width: 200px;
+            height: var(--slot-height);
+            border: 5px solid #3498db;
+            border-radius: 15px;
+            overflow: hidden;
+            background: white;
+            position: relative;
+        }
+
+        .slot-unit:last-child .slot-machine { border-color: #e67e22; }
+
+        .slot-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            text-align: center;
+        }
+
+        .slot-item {
+            height: var(--slot-height);
+            line-height: var(--slot-height);
+            font-size: var(--font-size-main);
+            font-weight: 600;
+            border-bottom: 1px solid #eee;
+            box-sizing: border-box;
+        }
+
+        .text-area {
+            width: 300px;
+            height: 180px;
+            background-color: white;
+            border: 2px dashed #bdc3c7;
+            border-radius: 12px;
+            padding: 20px;
+            color: #2c3e50;
+            font-size: var(--font-size-main);
+            font-family: inherit;
+            resize: none;
+            outline: none;
+            text-align: center;
+        }
+
+        .spin-btn {
+            padding: 15px 35px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .left-btn { background-color: #3498db; box-shadow: 0 4px 0 #2980b9; }
+        .right-btn { background-color: #e67e22; box-shadow: 0 4px 0 #d35400; }
+        .spin-btn:disabled { background-color: #bdc3c7; box-shadow: none; cursor: not-allowed; }
+
+        /* 설정 영역 스타일 */
+        .settings {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            gap: 20px;
+            border: 1px solid #ddd;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .word-input {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .update-btn {
+            align-self: flex-end;
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .update-btn:hover { background-color: #27ae60; }
+    </style>
+</head>
+<body>
+
+    <h1>🗣️ 단어 조합 연습 (커스텀)</h1>
+
+    <div class="main-layout">
+        <div class="slot-unit">
+            <div class="slot-machine">
+                <ul class="slot-list" id="leftList"></ul>
+            </div>
+            <button class="spin-btn left-btn" onclick="spin('left')">인물 뽑기</button>
+        </div>
+
+        <textarea class="text-area" placeholder="문장을 만들어보세요."></textarea>
+
+        <div class="slot-unit">
+            <div class="slot-machine">
+                <ul class="slot-list" id="rightList"></ul>
+            </div>
+            <button class="spin-btn right-btn" onclick="spin('right')">직업 뽑기</button>
+        </div>
+    </div>
+
+    <div class="settings">
+        <div class="input-group">
+            <label>왼쪽 룰렛 단어 (쉼표로 구분)</label>
+            <input type="text" id="leftWordsInput" class="word-input" value="아버지, 어머니, 형, 오빠, 누나, 언니, 동생, 나">
+        </div>
+        <div class="input-group">
+            <label>오른쪽 룰렛 단어 (쉼표로 구분)</label>
+            <input type="text" id="rightWordsInput" class="word-input" value="경찰관, 학생, 공무원, 소방관, 운동선수, 회사원, 선생님, 의사">
+        </div>
+        <button class="update-btn" onclick="updateWords()">단어 업데이트</button>
+    </div>
+
+    <script>
+        let leftData = [];
+        let rightData = [];
+        const slotHeight = 80;
+
+        // 단어 리스트 업데이트 및 화면 초기화
+        function updateWords() {
+            const leftInput = document.getElementById('leftWordsInput').value;
+            const rightInput = document.getElementById('rightWordsInput').value;
+
+            // 쉼표로 분리하고 공백 제거
+            leftData = leftInput.split(',').map(w => w.trim()).filter(w => w !== "");
+            rightData = rightInput.split(',').map(w => w.trim()).filter(w => w !== "");
+
+            if(leftData.length === 0 || rightData.length === 0) {
+                alert("최소 한 개 이상의 단어를 입력해주세요.");
+                return;
+            }
+
+            renderSlot('leftList', leftData);
+            renderSlot('rightList', rightData);
+            
+            // 위치 리셋
+            resetPosition('leftList');
+            resetPosition('rightList');
+        }
+
+        function renderSlot(id, data) {
+            const el = document.getElementById(id);
+            let html = '';
+            // 시각적 연속성을 위해 데이터 세트를 15번 반복
+            for(let i=0; i<15; i++) {
+                data.forEach(word => html += `<li class="slot-item">${word}</li>`);
+            }
+            el.innerHTML = html;
+        }
+
+        function resetPosition(id) {
+            const el = document.getElementById(id);
+            el.style.transition = 'none';
+            el.style.transform = 'translateY(0)';
+        }
+
+        function spin(side) {
+            const list = document.getElementById(side + 'List');
+            const btn = event.target;
+            const data = (side === 'left') ? leftData : rightData;
+
+            btn.disabled = true;
+
+            // 1. 위치 초기화
+            list.style.transition = 'none';
+            list.style.transform = 'translateY(0)';
+            list.offsetHeight; // Reflow
+
+            // 2. 랜덤 인덱스 및 이동 거리 계산
+            const randomIndex = Math.floor(Math.random() * data.length);
+            // 최소 8바퀴 회전 후 결과값 도달
+            const moveY = ( (data.length * 8) + randomIndex ) * slotHeight;
+
+            list.style.transition = 'transform 2s cubic-bezier(0.15, 0, 0.15, 1)';
+            list.style.transform = `translateY(-${moveY}px)`;
+
+            setTimeout(() => {
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        // 페이지 로드 시 초기 실행
+        updateWords();
+    </script>
+</body>
+</html>
