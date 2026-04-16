@@ -168,7 +168,8 @@
       font-weight: 700;
       cursor: grab;
       user-select: none;
-      -webkit-user-drag: element;
+      -webkit-user-drag: none;
+      touch-action: none;
       box-shadow: 0 4px 10px rgba(59, 130, 246, 0.08);
       position: relative;
       overflow: visible;
@@ -192,6 +193,21 @@
     .card.locked {
       cursor: default;
       opacity: 0.72;
+    }
+
+    .card.dragging-source {
+      opacity: 0.32;
+    }
+
+    .drag-ghost {
+      position: fixed;
+      left: 0;
+      top: 0;
+      z-index: 9999;
+      pointer-events: none;
+      margin: 0;
+      transform: translate(-50%, -50%) scale(1.04);
+      box-shadow: 0 16px 28px rgba(15, 23, 42, 0.18);
     }
 
     .card::after {
@@ -564,6 +580,7 @@
     const treeWrap = document.getElementById('treeWrap');
 
     let isExtendedMode = false;
+    let dragState = null;
 
     function getAllCards() {
       return [...document.querySelectorAll('.card')];
@@ -585,9 +602,12 @@
       return card.dataset.home === 'extra' ? extraCardList : cardList;
     }
 
+    function isCardMovable(card) {
+      return !card.classList.contains('locked');
+    }
+
     function updateExtraCardState() {
       getExtraCards().forEach((card) => {
-        card.draggable = isExtendedMode;
         card.classList.toggle('locked', !isExtendedMode);
       });
 
@@ -668,46 +688,116 @@
       checkAnswers();
     }
 
-    function enableCardDrag(card) {
-      card.addEventListener('dragstart', (e) => {
-        if (!card.draggable) {
-          e.preventDefault();
-          return;
-        }
-        e.dataTransfer.setData('text/plain', card.id);
-      });
+    function clearDropHighlights() {
+      document.querySelectorAll('.slot').forEach((slot) => slot.classList.remove('over'));
+      document.querySelectorAll('.card-list').forEach((list) => list.classList.remove('drop-over'));
     }
 
-    function enableDropTarget(target) {
-      target.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if (target.classList.contains('card-list')) {
-          target.classList.add('drop-over');
-        } else {
-          target.classList.add('over');
-        }
-      });
+    function findDropTarget(clientX, clientY) {
+      const element = document.elementFromPoint(clientX, clientY);
+      if (!element) return null;
+      const target = element.closest('.slot, .card-list');
+      if (!target) return null;
+      if (target.classList.contains('slot')) {
+        return getVisibleTree().contains(target) ? target : null;
+      }
+      return target;
+    }
 
-      target.addEventListener('dragleave', () => {
-        target.classList.remove('over', 'drop-over');
-      });
+    function highlightDropTarget(target) {
+      clearDropHighlights();
+      if (!target) return;
+      if (target.classList.contains('slot')) {
+        target.classList.add('over');
+      } else if (target.classList.contains('card-list')) {
+        target.classList.add('drop-over');
+      }
+    }
 
-      target.addEventListener('drop', (e) => {
-        e.preventDefault();
-        target.classList.remove('over', 'drop-over');
+    function moveGhost(clientX, clientY) {
+      if (!dragState) return;
+      dragState.ghost.style.left = `${clientX}px`;
+      dragState.ghost.style.top = `${clientY}px`;
+      const target = findDropTarget(clientX, clientY);
+      dragState.currentTarget = target;
+      highlightDropTarget(target);
+    }
 
-        const cardId = e.dataTransfer.getData('text/plain');
-        const droppedCard = document.getElementById(cardId);
-        if (!droppedCard) return;
-        if (!droppedCard.draggable) return;
+    function finishDrag(clientX, clientY) {
+      if (!dragState) return;
 
-        if (target.classList.contains('card-list')) {
-          target.appendChild(droppedCard);
+      const { card, ghost, originParent } = dragState;
+      const target = findDropTarget(clientX, clientY) || dragState.currentTarget;
+
+      clearDropHighlights();
+      card.classList.remove('dragging-source');
+      ghost.remove();
+
+      if (target) {
+        if (target.classList.contains('slot')) {
+          placeCardToTarget(target, card);
+        } else if (target.classList.contains('card-list')) {
+          target.appendChild(card);
           checkAnswers();
-          return;
         }
+      } else if (originParent) {
+        originParent.appendChild(card);
+        checkAnswers();
+      }
 
-        placeCardToTarget(target, droppedCard);
+      dragState = null;
+    }
+
+    function handlePointerMove(event) {
+      if (!dragState || event.pointerId !== dragState.pointerId) return;
+      moveGhost(event.clientX, event.clientY);
+    }
+
+    function handlePointerUp(event) {
+      if (!dragState || event.pointerId !== dragState.pointerId) return;
+      finishDrag(event.clientX, event.clientY);
+      window.removeEventListener('pointermove', handlePointerMove);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+    }
+
+    function enableCardDrag(card) {
+      if (card.dataset.pointerBound === 'true') return;
+      card.dataset.pointerBound = 'true';
+
+      card.addEventListener('dragstart', (event) => {
+        event.preventDefault();
+      });
+
+      card.addEventListener('pointerdown', (event) => {
+        if (!isCardMovable(card)) return;
+        if (event.button !== undefined && event.button !== 0) return;
+
+        event.preventDefault();
+
+        const rect = card.getBoundingClientRect();
+        const ghost = card.cloneNode(true);
+        ghost.classList.remove('locked', 'dragging-source');
+        ghost.classList.add('drag-ghost');
+        ghost.style.width = `${rect.width}px`;
+        ghost.style.height = `${rect.height}px`;
+        document.body.appendChild(ghost);
+
+        card.classList.add('dragging-source');
+
+        dragState = {
+          card,
+          ghost,
+          originParent: card.parentElement,
+          pointerId: event.pointerId,
+          currentTarget: null,
+        };
+
+        moveGhost(event.clientX, event.clientY);
+
+        window.addEventListener('pointermove', handlePointerMove, { passive: false });
+        window.addEventListener('pointerup', handlePointerUp);
+        window.addEventListener('pointercancel', handlePointerUp);
       });
     }
 
@@ -731,9 +821,6 @@
     }
 
     getAllCards().forEach(enableCardDrag);
-    document.querySelectorAll('.slot').forEach(enableDropTarget);
-    enableDropTarget(cardList);
-    enableDropTarget(extraCardList);
 
     resetBtn.addEventListener('click', resetAllCards);
     toggleModeBtn.addEventListener('click', switchMode);
