@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>가계도 드래그 프로토타입</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #f5f7fb;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #94a3b8;
+      --slot-border: #cbd5e1;
+      --slot-bg: #ffffff;
+      --card-bg: #e8f0ff;
+      --card-border: #b6c8f5;
+      --extra-card-bg: #fff7ed;
+      --extra-card-border: #fed7aa;
+      --accent: #3b82f6;
+      --accent-2: #f97316;
+      --wrong: #f472b6;
+      --wrong-bg: #fdf2f8;
+      --correct: #86efac;
+      --correct-bg: #f0fdf4;
+      --shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+    }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Noto Sans KR", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .page {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .header {
+      background: var(--panel);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .header h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    .header p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .left-column {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+    }
+
+    .panel h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .panel p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .panel-header h2 {
+      margin: 0;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tool-btn {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+      color: white;
+    }
+
+    .tool-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .tool-btn.primary {
+      background: var(--accent);
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.18);
+    }
+
+    .tool-btn.orange {
+      background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
+      box-shadow: 0 8px 16px rgba(249, 115, 22, 0.18);
+    }
+
+    .tool-btn.gray {
+      background: #64748b;
+      box-shadow: 0 8px 16px rgba(100, 116, 139, 0.18);
+    }
+
+    .card-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      min-height: 78px;
+      padding: 4px;
+      border-radius: 16px;
+    }
+
+    .card-list.drop-over {
+      background: #f8fbff;
+      outline: 2px dashed #bfdbfe;
+    }
+
+    .card {
+      min-width: 110px;
+      min-height: 58px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-weight: 700;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-drag: element;
+      box-shadow: 0 4px 10px rgba(59, 130, 246, 0.08);
+      position: relative;
+      overflow: visible;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .card:active {
+      cursor: grabbing;
+    }
+
+    .card:hover {
+      transform: translateY(-1px);
+    }
+
+    .card.extra-card {
+      background: var(--extra-card-bg);
+      border-color: var(--extra-card-border);
+      box-shadow: 0 4px 10px rgba(249, 115, 22, 0.08);
+    }
+
+    .card.locked {
+      cursor: default;
+      opacity: 0.72;
+    }
+
+    .card::after {
+      content: attr(data-desc);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 14px);
+      transform: translateX(-50%) translateY(6px);
+      min-width: 190px;
+      max-width: 280px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(17, 24, 39, 0.94);
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      white-space: normal;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 30;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 6px);
+      transform: translateX(-50%) translateY(6px);
+      border-width: 8px;
+      border-style: solid;
+      border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 29;
+    }
+
+    .card:hover::after,
+    .card:hover::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .tree-panel {
+      overflow-x: auto;
+    }
+
+    .feedback {
+      margin: 0 0 14px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .tree-wrap {
+      position: relative;
+      padding: 20px 10px 10px;
+      min-width: 780px;
+    }
+
+    .tree-wrap.mode-standard {
+      min-width: 780px;
+    }
+
+    .tree-wrap.mode-extended {
+      min-width: 1040px;
+    }
+
+    .tree {
+      position: relative;
+      margin: 0 auto;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border: 1px solid #edf2f7;
+    }
+
+    .tree svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .tree line {
+      stroke: var(--line);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .tree-standard {
+      width: 760px;
+      height: 620px;
+      display: none;
+    }
+
+    .tree-extended {
+      width: 1020px;
+      height: 720px;
+      display: none;
+    }
+
+    .tree.active {
+      display: block !important;
+    }
+
+    .slot {
+      position: absolute;
+      width: 150px;
+      min-height: 92px;
+      border: 2px dashed var(--slot-border);
+      border-radius: 18px;
+      background: var(--slot-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .slot.over {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+
+    .slot.wrong {
+      border-color: var(--wrong);
+      background: var(--wrong-bg);
+    }
+
+    .slot.correct {
+      border-color: var(--correct);
+      background: var(--correct-bg);
+    }
+
+    .slot-label {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 1px solid #dbe4f0;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      color: #475569;
+    }
+
+    .slot .card {
+      width: 100%;
+      min-width: 0;
+      min-height: 72px;
+    }
+
+    .tree-note {
+      position: absolute;
+      left: 18px;
+      background: #eef4ff;
+      color: #47618d;
+      border: 1px solid #dbe7ff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .note-top { top: 18px; }
+    .note-middle { top: 220px; }
+    .note-bottom { top: 490px; }
+    .note-side-top { top: 220px; right: 18px; left: auto; }
+    .note-side-bottom { top: 490px; right: 18px; left: auto; }
+
+    /* 기본형 자리 */
+    .std-grandfather { top: 60px; left: 120px; }
+    .std-grandmother { top: 60px; right: 120px; }
+    .std-father { top: 260px; left: 120px; }
+    .std-mother { top: 260px; right: 120px; }
+    .std-older { top: 470px; left: 20px; }
+    .std-me { top: 470px; left: 305px; }
+    .std-younger { top: 470px; right: 20px; }
+
+    /* 확장형 자리 */
+    .ext-grand-1 { top: 60px; left: 280px; }
+    .ext-grand-2 { top: 60px; right: 280px; }
+
+    .ext-parent-1 { top: 260px; left: 120px; }
+    .ext-parent-2 { top: 260px; left: 310px; }
+    .ext-parent-3 { top: 260px; left: 500px; }
+    .ext-parent-4 { top: 260px; left: 690px; }
+
+    .ext-child-1 { top: 500px; left: 215px; }
+    .ext-child-2 { top: 500px; left: 425px; }
+    .ext-child-3 { top: 500px; left: 595px; }
+    .ext-child-4 { top: 500px; left: 765px; }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .left-column {
+        gap: 16px;
+      }
+
+      .card-list {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px;
+      }
+
+      .header h1 {
+        font-size: 24px;
+      }
+
+      .panel {
+        padding: 14px;
+      }
+
+      .tool-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="header">
+      <h1>가계도 드래그 프로토타입</h1>
+      <p>카드를 드래그해서 가계도에 배치해 보세요. 기본형과 확장형을 전환할 수 있으며, 카드를 놓으면 바로 정답 여부를 확인합니다.</p>
+    </section>
+
+    <section class="layout">
+      <div class="left-column">
+        <div class="panel">
+          <div class="panel-header">
+            <h2>인물 카드</h2>
+            <div class="button-row">
+              <button class="tool-btn primary" id="resetBtn">초기화</button>
+            </div>
+          </div>
+          <p>기본 가족 카드를 끌어서 원하는 자리에 놓아 보세요. 같은 세대 안에서는 어느 칸에 놓아도 정답으로 처리됩니다.</p>
+          <div class="card-list" id="cardList">
+            <div class="card" draggable="true" id="card-grandfather" data-generation="1" data-home="main" data-desc="할아버지는 아버지 또는 어머니의 아버지예요.">할아버지</div>
+            <div class="card" draggable="true" id="card-grandmother" data-generation="1" data-home="main" data-desc="할머니는 아버지 또는 어머니의 어머니예요.">할머니</div>
+            <div class="card" draggable="true" id="card-father" data-generation="2" data-home="main" data-desc="아버지는 나와 형제자매들의 아버지예요.">아버지</div>
+            <div class="card" draggable="true" id="card-mother" data-generation="2" data-home="main" data-desc="어머니는 나와 형제자매들의 어머니예요.">어머니</div>
+            <div class="card" draggable="true" id="card-older" data-generation="3" data-home="main" data-desc="형 또는 누나는 나보다 나이가 많은 형제자매예요.">형/누나</div>
+            <div class="card" draggable="true" id="card-me" data-generation="3" data-home="main" data-desc="나는 이 가족 관계를 기준으로 자신을 가리키는 말이에요.">나</div>
+            <div class="card" draggable="true" id="card-younger" data-generation="3" data-home="main" data-desc="동생은 나보다 나이가 어린 형제자매예요.">동생</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>추가 어휘</h2>
+            <div class="button-row">
+              <button class="tool-btn orange" id="toggleModeBtn">확장버전</button>
+            </div>
+          </div>
+          <p id="extraHelp">추가 어휘 카드는 기본형에서는 설명용입니다. 확장버전을 누르면 드래그해서 배치할 수 있습니다.</p>
+          <div class="card-list" id="extraCardList">
+            <div class="card extra-card locked" draggable="false" id="card-aunt" data-generation="2" data-home="extra" data-desc="고모는 아버지의 여자 형제이고, 이모는 어머니의 여자 형제예요.">고모/이모</div>
+            <div class="card extra-card locked" draggable="false" id="card-uncle" data-generation="2" data-home="extra" data-desc="삼촌은 아버지의 남자 형제를, 외삼촌은 어머니의 남자 형제를 가리켜요.">삼촌/외삼촌</div>
+            <div class="card extra-card locked" draggable="false" id="card-cousin" data-generation="3" data-home="extra" data-desc="사촌은 고모, 이모, 삼촌, 외삼촌의 자녀예요.">사촌</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel tree-panel">
+        <p class="feedback" id="feedback">기본형 가계도입니다. 카드를 배치해 보세요.</p>
+        <div class="tree-wrap mode-standard" id="treeWrap">
+          <div class="tree tree-standard active" id="standardTree">
+            <div class="tree-note note-top">조부모</div>
+            <div class="tree-note note-middle">부모</div>
+            <div class="tree-note note-bottom">자녀</div>
+            <svg viewBox="0 0 760 620" aria-hidden="true">
+              <line x1="270" y1="105" x2="490" y2="105"></line>
+              <line x1="380" y1="105" x2="380" y2="225"></line>
+              <line x1="270" y1="305" x2="490" y2="305"></line>
+              <line x1="380" y1="225" x2="380" y2="260"></line>
+              <line x1="380" y1="305" x2="380" y2="440"></line>
+              <line x1="95" y1="515" x2="665" y2="515"></line>
+              <line x1="380" y1="440" x2="380" y2="515"></line>
+            </svg>
+            <div class="slot std-grandfather" data-generation="1"><span class="slot-label">조부모</span></div>
+            <div class="slot std-grandmother" data-generation="1"><span class="slot-label">조부모</span></div>
+            <div class="slot std-father" data-generation="2"><span class="slot-label">부모</span></div>
+            <div class="slot std-mother" data-generation="2"><span class="slot-label">부모</span></div>
+            <div class="slot std-older" data-generation="3"><span class="slot-label">자녀</span></div>
+            <div class="slot std-me" data-generation="3"><span class="slot-label">자녀</span></div>
+            <div class="slot std-younger" data-generation="3"><span class="slot-label">자녀</span></div>
+          </div>
+
+          <div class="tree tree-extended" id="extendedTree">
+            <div class="tree-note note-top">조부모</div>
+            <div class="tree-note note-middle">부모 / 부모 세대 친척</div>
+            <div class="tree-note note-bottom">자녀 / 자녀 세대 친척</div>
+            <svg viewBox="0 0 1020 720" aria-hidden="true">
+              <line x1="430" y1="105" x2="590" y2="105"></line>
+              <line x1="510" y1="105" x2="510" y2="180"></line>
+              <line x1="290" y1="180" x2="670" y2="180"></line>
+
+              <line x1="290" y1="180" x2="290" y2="305"></line>
+              <line x1="670" y1="180" x2="670" y2="305"></line>
+              <line x1="195" y1="305" x2="385" y2="305"></line>
+              <line x1="575" y1="305" x2="765" y2="305"></line>
+
+              <line x1="290" y1="305" x2="290" y2="545"></line>
+
+              <line x1="670" y1="305" x2="670" y2="545"></line>
+              <line x1="500" y1="545" x2="840" y2="545"></line>
+            </svg>
+            <div class="slot ext-grand-1" data-generation="1"><span class="slot-label">조부모</span></div>
+            <div class="slot ext-grand-2" data-generation="1"><span class="slot-label">조부모</span></div>
+
+            <div class="slot ext-parent-1" data-generation="2"><span class="slot-label">부모 세대</span></div>
+            <div class="slot ext-parent-2" data-generation="2"><span class="slot-label">부모 세대</span></div>
+            <div class="slot ext-parent-3" data-generation="2"><span class="slot-label">부모 세대</span></div>
+            <div class="slot ext-parent-4" data-generation="2"><span class="slot-label">부모 세대</span></div>
+
+            <div class="slot ext-child-1" data-generation="3"><span class="slot-label">사촌</span></div>
+            <div class="slot ext-child-2" data-generation="3"><span class="slot-label">자녀 세대</span></div>
+            <div class="slot ext-child-3" data-generation="3"><span class="slot-label">자녀 세대</span></div>
+            <div class="slot ext-child-4" data-generation="3"><span class="slot-label">자녀 세대</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="jinssem-shelter" style="text-align: center; margin: 80px auto 40px; padding: 45px 20px; border-radius: 28px; background-color: #ffffff; border: 1px solid #f2f2f2; max-width: 550px; box-shadow: 0 10px 25px rgba(0,0,0,0.04);">
+      <div style="margin-bottom: 25px;">
+        <h3 style="margin: 0; color: #333; font-size: 1.4rem; font-weight: 800;">진쌤's 한국어 교원 쉘터</h3>
+        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-top: 10px; padding: 0 20px;">
+          "교육과 창작의 즐거움을 나누는 공간입니다.<br>
+          따뜻한 커피 한 잔으로 응원해주세요!"
+        </p>
+      </div>
+
+      <a href="https://www.postype.com/@revecnl-edu" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 12px; width: 85%; padding: 18px; background: linear-gradient(135deg, #ff9e57 0%, #ff7e36 100%); color: white; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 17px; box-shadow: 0 6px 20px rgba(255, 126, 54, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(255, 126, 54, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(255, 126, 54, 0.3)'">
+        <span>☕ 커피 한 잔으로 진쌤 응원하기</span>
+      </a>
+
+      <div style="margin-top: 25px; border-top: 1px solid #f9f9f9; padding-top: 20px;">
+        <p style="color: #bbb; font-size: 0.8rem; letter-spacing: 1px; margin: 0;">REVOLUTIONIZING EDUCATION & CREATION</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cardList = document.getElementById('cardList');
+    const extraCardList = document.getElementById('extraCardList');
+    const resetBtn = document.getElementById('resetBtn');
+    const toggleModeBtn = document.getElementById('toggleModeBtn');
+    const feedback = document.getElementById('feedback');
+    const extraHelp = document.getElementById('extraHelp');
+    const standardTree = document.getElementById('standardTree');
+    const extendedTree = document.getElementById('extendedTree');
+    const treeWrap = document.getElementById('treeWrap');
+
+    let isExtendedMode = false;
+
+    function getAllCards() {
+      return [...document.querySelectorAll('.card')];
+    }
+
+    function getExtraCards() {
+      return [...document.querySelectorAll('.extra-card')];
+    }
+
+    function getVisibleTree() {
+      return isExtendedMode ? extendedTree : standardTree;
+    }
+
+    function getVisibleSlots() {
+      return [...getVisibleTree().querySelectorAll('.slot')];
+    }
+
+    function getHomeContainer(card) {
+      return card.dataset.home === 'extra' ? extraCardList : cardList;
+    }
+
+    function updateExtraCardState() {
+      getExtraCards().forEach((card) => {
+        card.draggable = isExtendedMode;
+        card.classList.toggle('locked', !isExtendedMode);
+      });
+
+      if (isExtendedMode) {
+        extraHelp.textContent = '확장형 가계도입니다. 추가 어휘 카드도 드래그해서 배치할 수 있습니다.';
+        toggleModeBtn.textContent = '기본버전';
+        toggleModeBtn.classList.remove('orange');
+        toggleModeBtn.classList.add('gray');
+      } else {
+        extraHelp.textContent = '추가 어휘 카드는 기본형에서는 설명용입니다. 확장버전을 누르면 드래그해서 배치할 수 있습니다.';
+        toggleModeBtn.textContent = '확장버전';
+        toggleModeBtn.classList.remove('gray');
+        toggleModeBtn.classList.add('orange');
+      }
+    }
+
+    function clearSlotStates() {
+      document.querySelectorAll('.slot').forEach((slot) => {
+        slot.classList.remove('wrong', 'correct', 'over');
+      });
+      document.querySelectorAll('.card-list').forEach((list) => {
+        list.classList.remove('drop-over');
+      });
+    }
+
+    function resetAllCards() {
+      getAllCards().forEach((card) => {
+        getHomeContainer(card).appendChild(card);
+      });
+      clearSlotStates();
+      checkAnswers();
+    }
+
+    function checkAnswers() {
+      clearSlotStates();
+
+      const visibleSlots = getVisibleSlots();
+      let placedCount = 0;
+      let correctCount = 0;
+
+      visibleSlots.forEach((slot) => {
+        const placedCard = slot.querySelector('.card');
+        if (!placedCard) return;
+
+        placedCount += 1;
+        if (placedCard.dataset.generation === slot.dataset.generation) {
+          slot.classList.add('correct');
+          correctCount += 1;
+        } else {
+          slot.classList.add('wrong');
+        }
+      });
+
+      if (placedCount === 0) {
+        feedback.textContent = isExtendedMode
+          ? '확장형 가계도입니다. 부모 세대 친척과 자녀 세대 친척 자리까지 함께 배치해 보세요.'
+          : '기본형 가계도입니다. 카드를 배치해 보세요.';
+        return;
+      }
+
+      if (correctCount === visibleSlots.length) {
+        feedback.textContent = isExtendedMode
+          ? '정답입니다. 확장형 가계도의 모든 카드가 올바른 세대에 배치되었습니다.'
+          : '정답입니다. 모든 카드가 올바른 세대에 배치되었습니다.';
+        return;
+      }
+
+      const wrongCount = placedCount - correctCount;
+      feedback.textContent = `현재 ${placedCount}개 배치됨 · 정답 ${correctCount}개 · 틀림 ${wrongCount}개`;
+    }
+
+    function placeCardToTarget(target, droppedCard) {
+      const existingCard = target.querySelector('.card');
+      if (existingCard && existingCard !== droppedCard) {
+        getHomeContainer(existingCard).appendChild(existingCard);
+      }
+      target.appendChild(droppedCard);
+      checkAnswers();
+    }
+
+    function enableCardDrag(card) {
+      card.addEventListener('dragstart', (e) => {
+        if (!card.draggable) {
+          e.preventDefault();
+          return;
+        }
+        e.dataTransfer.setData('text/plain', card.id);
+      });
+    }
+
+    function enableDropTarget(target) {
+      target.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (target.classList.contains('card-list')) {
+          target.classList.add('drop-over');
+        } else {
+          target.classList.add('over');
+        }
+      });
+
+      target.addEventListener('dragleave', () => {
+        target.classList.remove('over', 'drop-over');
+      });
+
+      target.addEventListener('drop', (e) => {
+        e.preventDefault();
+        target.classList.remove('over', 'drop-over');
+
+        const cardId = e.dataTransfer.getData('text/plain');
+        const droppedCard = document.getElementById(cardId);
+        if (!droppedCard) return;
+        if (!droppedCard.draggable) return;
+
+        if (target.classList.contains('card-list')) {
+          target.appendChild(droppedCard);
+          checkAnswers();
+          return;
+        }
+
+        placeCardToTarget(target, droppedCard);
+      });
+    }
+
+    function switchMode() {
+      isExtendedMode = !isExtendedMode;
+
+      if (isExtendedMode) {
+        standardTree.classList.remove('active');
+        extendedTree.classList.add('active');
+        treeWrap.classList.remove('mode-standard');
+        treeWrap.classList.add('mode-extended');
+      } else {
+        extendedTree.classList.remove('active');
+        standardTree.classList.add('active');
+        treeWrap.classList.remove('mode-extended');
+        treeWrap.classList.add('mode-standard');
+      }
+
+      updateExtraCardState();
+      resetAllCards();
+    }
+
+    getAllCards().forEach(enableCardDrag);
+    document.querySelectorAll('.slot').forEach(enableDropTarget);
+    enableDropTarget(cardList);
+    enableDropTarget(extraCardList);
+
+    resetBtn.addEventListener('click', resetAllCards);
+    toggleModeBtn.addEventListener('click', switchMode);
+
+    updateExtraCardState();
+    checkAnswers();
+  </script>
+</body>
+</html>
