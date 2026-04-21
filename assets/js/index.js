@@ -84,6 +84,7 @@ function createProgramCard(program) {
 
   const tags = document.createElement("div");
   tags.className = "program-tags";
+
   (program.tags || []).forEach((tag) => {
     tags.appendChild(createTag(tag));
   });
