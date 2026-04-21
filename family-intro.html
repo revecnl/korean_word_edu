@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>표 기반 소개 프로그램</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --line: #d8e3ef;
+      --line-strong: #b9cadb;
+      --text: #1f2d3d;
+      --sub: #5f7387;
+      --primary: #4f8cff;
+      --primary-dark: #3b74da;
+      --success: #1f9d61;
+      --danger: #d9534f;
+      --danger-bg: #fff1f0;
+      --shadow: 0 14px 30px rgba(39, 76, 119, 0.12);
+    }
+
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+      background: linear-gradient(180deg, #eef4fb 0%, #f9fbfe 100%);
+      color: var(--text);
+    }
+
+    .page {
+      min-height: 100vh;
+      padding: 28px 16px 40px;
+    }
+
+    .container {
+      width: min(1260px, 100%);
+      margin: 0 auto;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .back-button {
+      border: none;
+      background: #eef5ff;
+      color: var(--primary-dark);
+      padding: 12px 18px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 6px 16px rgba(79, 140, 255, 0.14);
+    }
+
+    .back-button:hover {
+      transform: translateY(-1px);
+      background: #e2eeff;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid rgba(216, 227, 239, 0.9);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 28px 28px 18px;
+      border-bottom: 1px solid #edf2f7;
+      background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      background: #edf5ff;
+      padding: 7px 11px;
+      border-radius: 999px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: clamp(28px, 4vw, 38px);
+      line-height: 1.2;
+    }
+
+    .header p {
+      margin: 0;
+      color: var(--sub);
+      line-height: 1.65;
+      font-size: 15px;
+    }
+
+    .content {
+      padding: 24px 28px 28px;
+    }
+
+    .preset-panel {
+      margin-bottom: 20px;
+      padding: 18px;
+      border: 1px solid #dbe7f4;
+      border-radius: 18px;
+      background: #f8fbff;
+    }
+
+    .preset-controls {
+      display: grid;
+      grid-template-columns: minmax(220px, 280px) repeat(2, auto);
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field-group label {
+      font-size: 13px;
+      font-weight: 800;
+      color: #4d657c;
+    }
+
+    .field-group input,
+    .field-group textarea,
+    .field-group select,
+    .subject-box input,
+    select,
+    .custom-input {
+      width: 100%;
+      border: 1px solid var(--line-strong);
+      border-radius: 12px;
+      background: #fff;
+      padding: 10px 12px;
+      font-size: 14px;
+      color: var(--text);
+      outline: none;
+      transition: 0.15s ease;
+    }
+
+    .field-group textarea {
+      min-height: 92px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    .field-group input:focus,
+    .field-group textarea:focus,
+    .field-group select:focus,
+    .subject-box input:focus,
+    select:focus,
+    .custom-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 140, 255, 0.12);
+    }
+
+    .custom-preset-panel {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px dashed #cbdced;
+      display: none;
+    }
+
+    .custom-preset-panel.show {
+      display: block;
+    }
+
+    .custom-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .columns-grid {
+      margin-top: 14px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .helper-text {
+      margin: 2px 0 0;
+      font-size: 12px;
+      line-height: 1.5;
+      color: #71869a;
+    }
+
+    .mini-title {
+      margin: 0 0 12px;
+      font-size: 15px;
+      font-weight: 800;
+      color: #39536c;
+    }
+
+    .subject-box {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+      color: var(--sub);
+      font-weight: 700;
+    }
+
+    .subject-box input {
+      width: 200px;
+      font-size: 15px;
+    }
+
+    .subject-suffix.hidden {
+      display: none;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: white;
+    }
+
+    table {
+      width: 100%;
+      min-width: 920px;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      background: #eef5fb;
+      color: #4b6177;
+      font-size: 14px;
+      font-weight: 800;
+      padding: 14px 10px;
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      text-align: center;
+    }
+
+    thead th:first-child {
+      width: 140px;
+    }
+
+    tbody th,
+    tbody td {
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      padding: 10px;
+      vertical-align: top;
+      background: #fff;
+    }
+
+    tbody th {
+      background: #f9fbfd;
+      font-size: 15px;
+      font-weight: 800;
+      color: #37506a;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    tr:last-child td,
+    tr:last-child th {
+      border-bottom: none;
+    }
+
+    th:last-child,
+    td:last-child {
+      border-right: none;
+    }
+
+    .cell {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 74px;
+    }
+
+    .custom-input {
+      display: none;
+    }
+
+    .custom-input.show {
+      display: block;
+    }
+
+    .actions,
+    .custom-actions {
+      margin-top: 20px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .action-button {
+      border: none;
+      border-radius: 14px;
+      padding: 13px 18px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .save-button {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 10px 18px rgba(79, 140, 255, 0.22);
+    }
+
+    .save-button:hover,
+    .secondary-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .save-button:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary-button {
+      background: #eef5ff;
+      color: var(--primary-dark);
+    }
+
+    .secondary-button:hover {
+      background: #e2eeff;
+    }
+
+    .reset-button {
+      background: #f1f4f8;
+      color: #516679;
+    }
+
+    .reset-button:hover {
+      background: #e7edf5;
+    }
+
+    .danger-button {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .danger-button:hover {
+      background: #ffe3e1;
+    }
+
+    .danger-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .notice {
+      margin-top: 12px;
+      min-height: 24px;
+      text-align: right;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--success);
+      opacity: 0;
+      transition: 0.2s ease;
+    }
+
+    .notice.show {
+      opacity: 1;
+    }
+
+    .guide {
+      margin-top: 18px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: #f7fbff;
+      border: 1px dashed #c8dcf3;
+      color: #557089;
+      line-height: 1.65;
+      font-size: 14px;
+    }
+
+    @media (max-width: 900px) {
+      .preset-controls,
+      .custom-grid,
+      .columns-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header,
+      .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .actions,
+      .custom-actions,
+      .notice,
+      .subject-box {
+        justify-content: stretch;
+      }
+
+      .action-button,
+      .subject-box input {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="container">
+      <div class="topbar">
+        <button class="back-button" id="backButton">← 로비로 돌아가기</button>
+      </div>
+
+      <section class="card">
+        <div class="header">
+          <div class="badge" id="badgeText">가족 소개 프로그램</div>
+          <h1 id="pageTitle">친구의 가족을 소개해 보세요</h1>
+          <p id="pageDescription">
+            각 칸에서 알맞은 내용을 선택해 친구의 가족 정보를 정리해 보세요.
+            드롭박스의 마지막 항목인 <strong>직접 입력</strong>을 선택하면 원하는 내용을 자유롭게 적을 수 있습니다.
+          </p>
+        </div>
+
+        <div class="content">
+          <section class="preset-panel">
+            <div class="preset-controls">
+              <div class="field-group">
+                <label for="presetSelect">프리셋 선택</label>
+                <select id="presetSelect"></select>
+              </div>
+              <button class="action-button secondary-button" id="toggleCustomPresetButton">커스텀 프리셋 만들기</button>
+              <button class="action-button danger-button" id="deleteCustomPresetButton" disabled>현재 커스텀 프리셋 삭제</button>
+            </div>
+
+            <div class="custom-preset-panel" id="customPresetPanel">
+              <p class="mini-title">커스텀 프리셋 만들기</p>
+              <div class="custom-grid">
+                <div class="field-group">
+                  <label for="customPresetName">프리셋 이름</label>
+                  <input type="text" id="customPresetName" placeholder="예: 우리 반 소개" />
+                </div>
+                <div class="field-group">
+                  <label for="customSubjectLabel">이름칸 라벨</label>
+                  <input type="text" id="customSubjectLabel" placeholder="예: 주제 이름" />
+                </div>
+                <div class="field-group">
+                  <label for="customSubjectPlaceholder">이름칸 안내 문구</label>
+                  <input type="text" id="customSubjectPlaceholder" placeholder="예: 우리 반" />
+                </div>
+                <div class="field-group">
+                  <label for="customSubjectSuffix">이름칸 뒤 문구</label>
+                  <input type="text" id="customSubjectSuffix" placeholder="예: 에 대한 정보" />
+                </div>
+                <div class="field-group">
+                  <label for="customRowHeaderTitle">첫 번째 열 제목</label>
+                  <input type="text" id="customRowHeaderTitle" placeholder="예: 대상" />
+                </div>
+                <div class="field-group">
+                  <label for="customRows">행 이름들</label>
+                  <textarea id="customRows" placeholder="예: 아버지, 어머니, 형, 누나"></textarea>
+                  <p class="helper-text">쉼표(,) 또는 줄바꿈으로 여러 항목을 입력할 수 있습니다.</p>
+                </div>
+              </div>
+
+              <div class="columns-grid">
+                <div class="field-group">
+                  <label for="customCol1Label">열 1 제목</label>
+                  <input type="text" id="customCol1Label" placeholder="예: 직업" />
+                  <textarea id="customCol1Options" placeholder="예: 회사원, 교사, 학생"></textarea>
+                </div>
+                <div class="field-group">
+                  <label for="customCol2Label">열 2 제목</label>
+                  <input type="text" id="customCol2Label" placeholder="예: 취미" />
+                  <textarea id="customCol2Options" placeholder="예: 운동, 독서, 여행"></textarea>
+                </div>
+                <div class="field-group">
+                  <label for="customCol3Label">열 3 제목</label>
+                  <input type="text" id="customCol3Label" placeholder="예: 외모" />
+                  <textarea id="customCol3Options" placeholder="예: 키가 커요, 안경을 써요"></textarea>
+                </div>
+                <div class="field-group">
+                  <label for="customCol4Label">열 4 제목</label>
+                  <input type="text" id="customCol4Label" placeholder="예: 기타" />
+                  <textarea id="customCol4Options" placeholder="예: 친절해요, 재미있어요"></textarea>
+                </div>
+              </div>
+
+              <div class="custom-actions">
+                <button class="action-button reset-button" id="clearCustomPresetButton">입력 비우기</button>
+                <button class="action-button save-button" id="createCustomPresetButton">커스텀 프리셋 저장</button>
+              </div>
+            </div>
+          </section>
+
+          <div class="subject-box">
+            <label for="subjectName" id="subjectLabel">친구 이름</label>
+            <input type="text" id="subjectName" placeholder="예: 민수" />
+            <span class="subject-suffix" id="subjectSuffix">씨의 가족</span>
+          </div>
+
+          <div class="table-wrap">
+            <table id="activityTable">
+              <thead>
+                <tr id="tableHeadRow"></tr>
+              </thead>
+              <tbody id="tableBody"></tbody>
+            </table>
+          </div>
+
+          <div class="actions">
+            <button class="action-button reset-button" id="resetButton">현재 프리셋 내용 초기화</button>
+            <button class="action-button save-button" id="saveButton">저장</button>
+          </div>
+
+          <div class="notice" id="notice">저장되었습니다.</div>
+
+          <div class="guide">
+            프리셋마다 작성 내용이 각각 저장됩니다. 커스텀 프리셋도 브라우저에 저장되며, 다시 접속해도 유지됩니다.
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    const DATA_STORAGE_PREFIX = "table_activity_data_v2";
+    const CUSTOM_PRESET_STORAGE_KEY = "table_activity_custom_presets_v2";
+    const LAST_PRESET_KEY = "table_activity_last_preset_v2";
+
+    const builtinPresets = [
+      {
+        id: "family",
+        name: "가족 소개",
+        badge: "가족 소개 프로그램",
+        title: "친구의 가족을 소개해 보세요",
+        description: "각 칸에서 알맞은 내용을 선택해 친구의 가족 정보를 정리해 보세요. 드롭박스의 마지막 항목인 직접 입력을 선택하면 원하는 내용을 자유롭게 적을 수 있습니다.",
+        subjectLabel: "친구 이름",
+        subjectPlaceholder: "예: 민수",
+        subjectSuffix: "씨의 가족",
+        rowHeaderTitle: "가족",
+        rows: ["아버지", "어머니", "형/오빠", "누나/언니", "남동생/여동생", "할아버지", "할머니"],
+        columns: [
+          { key: "col1", label: "직업", options: ["회사원", "교사", "학생", "공무원", "간호사", "의사", "요리사", "자영업", "주부"] },
+          { key: "col2", label: "취미", options: ["운동", "독서", "요리", "등산", "여행", "영화 보기", "음악 듣기", "게임", "산책"] },
+          { key: "col3", label: "외모", options: ["키가 커요", "키가 작아요", "안경을 써요", "머리가 짧아요", "머리가 길어요", "예뻐요", "잘생겼어요", "귀여워요"] },
+          { key: "col4", label: "기타", options: ["친절해요", "재미있어요", "조용해요", "활발해요", "요리를 잘해요", "운전을 잘해요", "노래를 잘해요", "함께 살아요"] }
+        ]
+      },
+      {
+        id: "friend",
+        name: "친구 소개",
+        badge: "친구 소개 프로그램",
+        title: "친구들을 비교해서 소개해 보세요",
+        description: "여러 친구의 정보를 표로 정리하며 말하기나 쓰기 활동에 활용할 수 있습니다. 기본 선택지를 고르거나 직접 입력으로 확장해 보세요.",
+        subjectLabel: "기준 인물",
+        subjectPlaceholder: "예: 안나",
+        subjectSuffix: "의 친구들",
+        rowHeaderTitle: "친구",
+        rows: ["친구 1", "친구 2", "친구 3", "친구 4", "친구 5"],
+        columns: [
+          { key: "col1", label: "국적", options: ["한국", "중국", "일본", "베트남", "태국", "말레이시아", "미국", "프랑스"] },
+          { key: "col2", label: "취미", options: ["운동", "독서", "영화 보기", "음악 듣기", "요리", "사진 찍기", "여행", "게임"] },
+          { key: "col3", label: "성격", options: ["친절해요", "조용해요", "활발해요", "재미있어요", "부지런해요", "상냥해요", "꼼꼼해요"] },
+          { key: "col4", label: "잘하는 것", options: ["한국어를 잘해요", "노래를 잘해요", "운동을 잘해요", "공부를 잘해요", "요리를 잘해요", "그림을 잘 그려요"] }
+        ]
+      },
+      {
+        id: "place",
+        name: "장소 소개",
+        badge: "장소 소개 프로그램",
+        title: "장소의 특징을 정리해 보세요",
+        description: "동네나 학교 주변의 장소를 비교하며 소개할 수 있는 프리셋입니다. 위치, 특징, 활동, 느낌을 중심으로 말하기에 적합합니다.",
+        subjectLabel: "주제 이름",
+        subjectPlaceholder: "예: 우리 동네",
+        subjectSuffix: "",
+        rowHeaderTitle: "장소",
+        rows: ["학교", "집", "공원", "카페", "식당"],
+        columns: [
+          { key: "col1", label: "위치", options: ["학교 앞에 있어요", "집 근처에 있어요", "역 옆에 있어요", "시내에 있어요", "조용한 곳에 있어요"] },
+          { key: "col2", label: "특징", options: ["커요", "작아요", "깨끗해요", "조용해요", "사람이 많아요", "편리해요"] },
+          { key: "col3", label: "활동", options: ["공부해요", "운동해요", "쉬어요", "이야기해요", "밥을 먹어요", "산책해요"] },
+          { key: "col4", label: "느낌", options: ["좋아요", "재미있어요", "편해요", "바빠 보여요", "아늑해요", "활기차요"] }
+        ]
+      },
+      {
+        id: "object",
+        name: "물건 소개",
+        badge: "물건 소개 프로그램",
+        title: "물건의 정보를 정리해 보세요",
+        description: "색, 크기, 용도, 느낌을 기준으로 다양한 물건을 비교할 수 있습니다. 초급 학습자의 형용사·명사 연습에도 활용하기 좋습니다.",
+        subjectLabel: "주제 이름",
+        subjectPlaceholder: "예: 내 가방 속 물건",
+        subjectSuffix: "",
+        rowHeaderTitle: "물건",
+        rows: ["가방", "책", "컴퓨터", "휴대폰", "물병"],
+        columns: [
+          { key: "col1", label: "색", options: ["빨간색", "파란색", "검은색", "흰색", "노란색", "초록색"] },
+          { key: "col2", label: "크기", options: ["커요", "작아요", "길어요", "짧아요", "가벼워요", "무거워요"] },
+          { key: "col3", label: "용도", options: ["공부할 때 써요", "매일 써요", "학교에서 써요", "집에서 써요", "여행할 때 써요"] },
+          { key: "col4", label: "느낌", options: ["편리해요", "예뻐요", "필요해요", "새 거예요", "오래됐어요", "좋아해요"] }
+        ]
+      }
+    ];
+
+    let customPresets = [];
+    let currentPreset = null;
+
+    const badgeText = document.getElementById("badgeText");
+    const pageTitle = document.getElementById("pageTitle");
+    const pageDescription = document.getElementById("pageDescription");
+    const presetSelect = document.getElementById("presetSelect");
+    const toggleCustomPresetButton = document.getElementById("toggleCustomPresetButton");
+    const deleteCustomPresetButton = document.getElementById("deleteCustomPresetButton");
+    const customPresetPanel = document.getElementById("customPresetPanel");
+    const clearCustomPresetButton = document.getElementById("clearCustomPresetButton");
+    const createCustomPresetButton = document.getElementById("createCustomPresetButton");
+    const subjectLabel = document.getElementById("subjectLabel");
+    const subjectNameInput = document.getElementById("subjectName");
+    const subjectSuffix = document.getElementById("subjectSuffix");
+    const tableHeadRow = document.getElementById("tableHeadRow");
+    const tableBody = document.getElementById("tableBody");
+    const activityTable = document.getElementById("activityTable");
+    const saveButton = document.getElementById("saveButton");
+    const resetButton = document.getElementById("resetButton");
+    const backButton = document.getElementById("backButton");
+    const notice = document.getElementById("notice");
+
+    function parseList(text) {
+      return (text || "")
+        .split(/[\n,]/)
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+
+    function ensureDirectInputOption(options) {
+      const cleaned = [...new Set((options || []).map(option => String(option).trim()).filter(Boolean))]
+        .filter(option => option !== "직접 입력");
+      return [...cleaned, "직접 입력"];
+    }
+
+    function normalizePreset(preset) {
+      if (!preset || !preset.id || !preset.name || !Array.isArray(preset.rows) || !Array.isArray(preset.columns)) {
+        return null;
+      }
+
+      const rows = [...new Set(preset.rows.map(row => String(row).trim()).filter(Boolean))];
+      const columns = preset.columns
+        .map((column, index) => {
+          const label = String(column.label || "").trim();
+          if (!label) return null;
+          return {
+            key: column.key || `col${index + 1}`,
+            label,
+            options: ensureDirectInputOption(column.options || [])
+          };
+        })
+        .filter(Boolean);
+
+      if (!rows.length || !columns.length) return null;
+
+      return {
+        id: String(preset.id),
+        name: String(preset.name),
+        badge: String(preset.badge || `${preset.name} 프리셋`),
+        title: String(preset.title || `${preset.name} 활동`),
+        description: String(preset.description || `${preset.name} 프리셋입니다. 필요한 내용을 선택하거나 직접 입력해 보세요.`),
+        subjectLabel: String(preset.subjectLabel || "주제 이름"),
+        subjectPlaceholder: String(preset.subjectPlaceholder || "예: 주제"),
+        subjectSuffix: String(preset.subjectSuffix || ""),
+        rowHeaderTitle: String(preset.rowHeaderTitle || "대상"),
+        rows,
+        columns
+      };
+    }
+
+    function loadCustomPresets() {
+      const raw = localStorage.getItem(CUSTOM_PRESET_STORAGE_KEY);
+      if (!raw) return [];
+
+      try {
+        const parsed = JSON.parse(raw);
+        if (!Array.isArray(parsed)) return [];
+        return parsed.map(normalizePreset).filter(Boolean);
+      } catch (error) {
+        console.error("커스텀 프리셋을 불러오는 중 오류가 발생했습니다.", error);
+        return [];
+      }
+    }
+
+    function saveCustomPresets() {
+      localStorage.setItem(CUSTOM_PRESET_STORAGE_KEY, JSON.stringify(customPresets));
+    }
+
+    function getAllPresets() {
+      return [...builtinPresets.map(normalizePreset), ...customPresets].filter(Boolean);
+    }
+
+    function getPresetById(id) {
+      return getAllPresets().find(preset => preset.id === id) || normalizePreset(builtinPresets[0]);
+    }
+
+    function isCustomPreset(id) {
+      return customPresets.some(preset => preset.id === id);
+    }
+
+    function populatePresetSelect(selectedId) {
+      const allPresets = getAllPresets();
+      presetSelect.innerHTML = "";
+
+      const builtinGroup = document.createElement("optgroup");
+      builtinGroup.label = "기본 프리셋";
+      allPresets.filter(preset => !isCustomPreset(preset.id)).forEach(preset => {
+        const option = document.createElement("option");
+        option.value = preset.id;
+        option.textContent = preset.name;
+        builtinGroup.appendChild(option);
+      });
+      presetSelect.appendChild(builtinGroup);
+
+      if (customPresets.length) {
+        const customGroup = document.createElement("optgroup");
+        customGroup.label = "커스텀 프리셋";
+        customPresets.forEach(preset => {
+          const option = document.createElement("option");
+          option.value = preset.id;
+          option.textContent = preset.name;
+          customGroup.appendChild(option);
+        });
+        presetSelect.appendChild(customGroup);
+      }
+
+      presetSelect.value = selectedId;
+    }
+
+    function getDataStorageKey(presetId) {
+      return `${DATA_STORAGE_PREFIX}:${presetId}`;
+    }
+
+    function updatePresetHeader() {
+      badgeText.textContent = currentPreset.badge;
+      pageTitle.textContent = currentPreset.title;
+      pageDescription.innerHTML = currentPreset.description;
+      subjectLabel.textContent = currentPreset.subjectLabel;
+      subjectNameInput.placeholder = currentPreset.subjectPlaceholder;
+      subjectSuffix.textContent = currentPreset.subjectSuffix;
+      subjectSuffix.classList.toggle("hidden", !currentPreset.subjectSuffix);
+      deleteCustomPresetButton.disabled = !isCustomPreset(currentPreset.id);
+    }
+
+    function fillSelectOptions(selectElement, options) {
+      selectElement.innerHTML = "";
+
+      const placeholderOption = document.createElement("option");
+      placeholderOption.value = "";
+      placeholderOption.textContent = "선택하세요";
+      selectElement.appendChild(placeholderOption);
+
+      options.forEach(optionText => {
+        const option = document.createElement("option");
+        option.value = optionText;
+        option.textContent = optionText;
+        selectElement.appendChild(option);
+      });
+    }
+
+    function createCell(rowName, column) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "cell";
+
+      const select = document.createElement("select");
+      select.dataset.row = rowName;
+      select.dataset.field = column.key;
+      select.setAttribute("aria-label", `${rowName} ${column.label}`);
+      fillSelectOptions(select, ensureDirectInputOption(column.options));
+
+      const customInput = document.createElement("input");
+      customInput.type = "text";
+      customInput.className = "custom-input";
+      customInput.placeholder = "직접 입력하세요";
+      customInput.dataset.row = rowName;
+      customInput.dataset.field = column.key;
+
+      select.addEventListener("change", () => {
+        const isCustom = select.value === "직접 입력";
+        customInput.classList.toggle("show", isCustom);
+        if (!isCustom) {
+          customInput.value = "";
+        } else {
+          customInput.focus();
+        }
+      });
+
+      wrapper.appendChild(select);
+      wrapper.appendChild(customInput);
+      return wrapper;
+    }
+
+    function renderTable() {
+      tableHeadRow.innerHTML = "";
+      tableBody.innerHTML = "";
+
+      const firstHeader = document.createElement("th");
+      firstHeader.textContent = currentPreset.rowHeaderTitle || "";
+      tableHeadRow.appendChild(firstHeader);
+
+      currentPreset.columns.forEach(column => {
+        const th = document.createElement("th");
+        th.textContent = column.label;
+        tableHeadRow.appendChild(th);
+      });
+
+      currentPreset.rows.forEach(rowName => {
+        const tr = document.createElement("tr");
+        const th = document.createElement("th");
+        th.textContent = rowName;
+        tr.appendChild(th);
+
+        currentPreset.columns.forEach(column => {
+          const td = document.createElement("td");
+          td.appendChild(createCell(rowName, column));
+          tr.appendChild(td);
+        });
+
+        tableBody.appendChild(tr);
+      });
+
+      activityTable.style.minWidth = `${Math.max(700, 150 + currentPreset.columns.length * 190)}px`;
+    }
+
+    function collectData() {
+      const data = {
+        subjectName: subjectNameInput.value.trim(),
+        rows: []
+      };
+
+      currentPreset.rows.forEach(rowName => {
+        const rowData = { rowName, values: {} };
+
+        currentPreset.columns.forEach(column => {
+          const select = document.querySelector(`select[data-row="${rowName}"][data-field="${column.key}"]`);
+          const customInput = document.querySelector(`input.custom-input[data-row="${rowName}"][data-field="${column.key}"]`);
+          rowData.values[column.key] = {
+            selected: select ? select.value : "",
+            custom: customInput ? customInput.value.trim() : ""
+          };
+        });
+
+        data.rows.push(rowData);
+      });
+
+      return data;
+    }
+
+    function applySavedData(data) {
+      subjectNameInput.value = data?.subjectName || "";
+
+      (data?.rows || []).forEach(rowData => {
+        currentPreset.columns.forEach(column => {
+          const select = document.querySelector(`select[data-row="${rowData.rowName}"][data-field="${column.key}"]`);
+          const customInput = document.querySelector(`input.custom-input[data-row="${rowData.rowName}"][data-field="${column.key}"]`);
+          const savedValue = rowData.values?.[column.key];
+          if (!select || !customInput || !savedValue) return;
+
+          select.value = savedValue.selected || "";
+          customInput.value = savedValue.custom || "";
+          customInput.classList.toggle("show", select.value === "직접 입력");
+        });
+      });
+    }
+
+    function loadData() {
+      const raw = localStorage.getItem(getDataStorageKey(currentPreset.id));
+      if (!raw) {
+        subjectNameInput.value = "";
+        return;
+      }
+
+      try {
+        const parsed = JSON.parse(raw);
+        applySavedData(parsed);
+      } catch (error) {
+        console.error("저장된 활동 데이터를 불러오는 중 오류가 발생했습니다.", error);
+      }
+    }
+
+    function saveData() {
+      const data = collectData();
+      localStorage.setItem(getDataStorageKey(currentPreset.id), JSON.stringify(data));
+      showNotice("저장되었습니다.");
+    }
+
+    function resetData() {
+      if (!confirm("현재 프리셋의 작성 내용을 초기화할까요?")) return;
+      localStorage.removeItem(getDataStorageKey(currentPreset.id));
+      subjectNameInput.value = "";
+      renderTable();
+      showNotice("초기화되었습니다.");
+    }
+
+    function showNotice(message) {
+      notice.textContent = message;
+      notice.classList.add("show");
+      clearTimeout(showNotice.timer);
+      showNotice.timer = setTimeout(() => {
+        notice.classList.remove("show");
+      }, 1800);
+    }
+
+    function setCurrentPreset(presetId) {
+      currentPreset = getPresetById(presetId);
+      localStorage.setItem(LAST_PRESET_KEY, currentPreset.id);
+      populatePresetSelect(currentPreset.id);
+      updatePresetHeader();
+      renderTable();
+      loadData();
+    }
+
+    function toggleCustomPresetPanel() {
+      customPresetPanel.classList.toggle("show");
+      toggleCustomPresetButton.textContent = customPresetPanel.classList.contains("show")
+        ? "커스텀 프리셋 닫기"
+        : "커스텀 프리셋 만들기";
+    }
+
+    function clearCustomPresetForm() {
+      [
+        "customPresetName",
+        "customSubjectLabel",
+        "customSubjectPlaceholder",
+        "customSubjectSuffix",
+        "customRowHeaderTitle",
+        "customRows",
+        "customCol1Label",
+        "customCol1Options",
+        "customCol2Label",
+        "customCol2Options",
+        "customCol3Label",
+        "customCol3Options",
+        "customCol4Label",
+        "customCol4Options"
+      ].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.value = "";
+      });
+    }
+
+    function createCustomPreset() {
+  const name = document.getElementById("customPresetName").value.trim();
+  const subjectLabelValue = document.getElementById("customSubjectLabel").value.trim() || "주제 이름";
+  const subjectPlaceholderValue = document.getElementById("customSubjectPlaceholder").value.trim() || "예: 주제";
+  const subjectSuffixValue = document.getElementById("customSubjectSuffix").value.trim();
+  const rowHeaderTitleValue = document.getElementById("customRowHeaderTitle").value.trim() || "대상";
+  const rows = parseList(document.getElementById("customRows").value);
+
+  const columns = [1, 2, 3, 4]
+    .map(index => {
+      const label = document.getElementById(`customCol${index}Label`).value.trim();
+      const options = parseList(document.getElementById(`customCol${index}Options`).value);
+      if (!label) return null;
+      return {
+        key: `col${index}`,
+        label,
+        options: ensureDirectInputOption(options.length ? options : [])
+      };
+    })
+    .filter(Boolean);
+
+  if (!name) {
+    alert("프리셋 이름을 입력해 주세요.");
+    return;
+  }
+
+  if (!rows.length) {
+    alert("행 이름을 한 개 이상 입력해 주세요.");
+    return;
+  }
+
+  if (!columns.length) {
+    alert("열 제목을 한 개 이상 입력해 주세요.");
+    return;
+  }
+
+  const preset = normalizePreset({
+    id: `custom_${Date.now()}`,
+    name,
+    badge: "커스텀 프리셋",
+    title: `${name} 활동`,
+    description: `${name} 프리셋입니다. 필요한 내용을 선택하거나 직접 입력하여 자유롭게 활동해 보세요.`,
+    subjectLabel: subjectLabelValue,
+    subjectPlaceholder: subjectPlaceholderValue,
+    subjectSuffix: subjectSuffixValue,
+    rowHeaderTitle: rowHeaderTitleValue,
+    rows,
+    columns
+  });
+
+  customPresets.push(preset);
+  saveCustomPresets();
+  populatePresetSelect(preset.id);
+  setCurrentPreset(preset.id);
+  clearCustomPresetForm();
+  customPresetPanel.classList.remove("show");
+  toggleCustomPresetButton.textContent = "커스텀 프리셋 만들기";
+  showNotice("커스텀 프리셋이 저장되었습니다.");
+}
+
+  function deleteCurrentCustomPreset() {
+  if (!isCustomPreset(currentPreset.id)) return;
+  if (!confirm(`현재 커스텀 프리셋 "${currentPreset.name}"을 삭제할까요?`)) return;
+
+  customPresets = customPresets.filter(preset => preset.id !== currentPreset.id);
+  saveCustomPresets();
+  localStorage.removeItem(getDataStorageKey(currentPreset.id));
+  setCurrentPreset("family");
+  showNotice("커스텀 프리셋이 삭제되었습니다.");
+}
+
+presetSelect.addEventListener("change", (event) => {
+  setCurrentPreset(event.target.value);
+});
+
+    toggleCustomPresetButton.addEventListener("click", toggleCustomPresetPanel);
+    clearCustomPresetButton.addEventListener("click", clearCustomPresetForm);
+    createCustomPresetButton.addEventListener("click", createCustomPreset);
+    deleteCustomPresetButton.addEventListener("click", deleteCurrentCustomPreset);
+
+    saveButton.addEventListener("click", saveData);
+    resetButton.addEventListener("click", resetData);
+
+    backButton.addEventListener("click", () => {
+      window.location.href = "./index.html";
+    });
+
+    customPresets = loadCustomPresets();
+    const initialPresetId = getPresetById(localStorage.getItem(LAST_PRESET_KEY) || "family").id;
+    populatePresetSelect(initialPresetId);
+    setCurrentPreset(initialPresetId);
+  </script>
+</body>
+</html>
