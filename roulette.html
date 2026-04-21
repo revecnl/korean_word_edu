@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>반응형 교육용 룰렛</title>
+    <title>랜덤 문장 만들기 | 한국어 수업 활동 도구</title>
     <style>
         :root {
             --slot-height: 80px;
@@ -36,6 +36,32 @@
         h1 {
             margin: 0 0 16px;
             text-align: center;
+        }
+
+        .top-nav {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            justify-content: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .home-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            border: none;
+            background: #1f2937;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        }
+
+        .home-btn:hover {
+            opacity: 0.92;
         }
 
         .status-bar {
@@ -311,6 +337,9 @@
     </style>
 </head>
 <body>
+    <div class="top-nav">
+        <a class="home-btn" href="./index.html">← 로비로 돌아가기</a>
+    </div>
     <h1>🎰 랜덤 문장 만들기</h1>
     <div id="statusBar" class="status-bar"></div>
 
@@ -377,19 +406,6 @@
     </div>
 
     <p class="footer-note">브라우저 저장 기능은 같은 기기·같은 브라우저에서 다시 열었을 때 복원됩니다.</p>
-
-    <div id="jinssem-shelter" style="text-align: center; margin: 80px auto 40px; padding: 45px 20px; border-radius: 28px; background-color: #ffffff; border: 1px solid #f2f2f2; max-width: 550px; box-shadow: 0 10px 25px rgba(0,0,0,0.04);">
-  
-  <div style="margin-bottom: 25px;">    
-    <h3 style="margin: 0; color: #333; font-size: 1.4rem; font-weight: 800;">진쌤's 한국어 교원 쉘터</h3>
-    <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-top: 10px; padding: 0 20px;">
-      "교육과 창작의 즐거움을 나누는 공간입니다.<br>
-    따뜻한 커피 한 잔으로 응원해주세요!"
-    </p>
-  </div>
-    <a href="https://posty.pe/dggrig" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 12px; width: 85%; padding: 18px; background: linear-gradient(135deg, #ff9e57 0%, #ff7e36 100%); color: white; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 17px; box-shadow: 0 6px 20px rgba(255, 126, 54, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(255, 126, 54, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(255, 126, 54, 0.3)'">
-    <span>☕ 커피 한 잔으로 진쌤 응원하기</span>
-  </a>
 
     <script>
         const STORAGE_KEYS = {
