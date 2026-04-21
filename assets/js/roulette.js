@@ -1,336 +1,367 @@
-const STORAGE_KEYS = {
-            state: 'eduRouletteSavedStateV2',
-            customPresets: 'eduRouletteCustomPresetsV2'
-        };
+let leftData = [];
+let rightData = [];
+let customPresets = [];
+let statusTimer = null;
 
-        const defaultState = {
-            leftInput: '아버지, 어머니, 형, 오빠, 누나, 언니, 동생, 나',
-            rightInput: '경찰관, 학생, 공무원, 소방관, 운동선수, 회사원, 선생님, 의사',
-            sentence: ''
-        };
+const slotHeight = 80;
 
-        const builtInPresets = {
-            국가: '한국, 중국, 일본, 미국, 베트남, 태국, 말레이시아, 몽골',
-            직업: '학생, 회사원, 의사, 선생님, 경찰관, 소방관, 공무원, 요리사',
-            가족: '아버지, 어머니, 형, 오빠, 누나, 언니, 동생, 할머니',
-            물건: '책, 가방, 휴대전화, 컴퓨터, 시계, 안경, 우산, 의자',
-            장소: '학교, 회사, 집, 도서관, 병원, 식당, 은행, 공원'
-        };
+const leftList = document.getElementById("leftList");
+const rightList = document.getElementById("rightList");
+const leftWordsInput = document.getElementById("leftWordsInput");
+const rightWordsInput = document.getElementById("rightWordsInput");
+const sentenceBox = document.getElementById("sentenceBox");
+const statusBar = document.getElementById("statusBar");
+const presetButtons = document.getElementById("presetButtons");
+const customPresetButtons = document.getElementById("customPresetButtons");
+const customPresetName = document.getElementById("customPresetName");
+const customPresetTarget = document.getElementById("customPresetTarget");
+const customPresetWords = document.getElementById("customPresetWords");
+const leftSpinButton = document.getElementById("leftSpinButton");
+const rightSpinButton = document.getElementById("rightSpinButton");
+const updateWordsButton = document.getElementById("updateWordsButton");
+const saveStateButton = document.getElementById("saveStateButton");
+const resetButton = document.getElementById("resetButton");
+const saveCustomPresetButton = document.getElementById("saveCustomPresetButton");
 
-        let leftData = [];
-        let rightData = [];
-        let customPresets = [];
-        const slotHeight = 80;
-        let statusTimer = null;
+function parseWords(text) {
+  return String(text || "")
+    .split(",")
+    .map((word) => word.trim())
+    .filter((word) => word !== "");
+}
 
-        function parseWords(text) {
-            return text
-                .split(',')
-                .map(word => word.trim())
-                .filter(word => word !== '');
-        }
+function safeParse(text, fallback) {
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    return fallback;
+  }
+}
 
-        function showStatus(message, type = 'info') {
-            const statusBar = document.getElementById('statusBar');
-            const colorMap = {
-                info: '#2c3e50',
-                success: '#16a34a',
-                error: '#dc2626'
-            };
-            statusBar.textContent = message;
-            statusBar.style.color = colorMap[type] || colorMap.info;
-            clearTimeout(statusTimer);
-            statusTimer = setTimeout(() => {
-                statusBar.textContent = '';
-            }, 2200);
-        }
+function escapeHtml(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
-        function updateWords(showMessage = true) {
-            const leftInput = document.getElementById('leftWordsInput').value;
-            const rightInput = document.getElementById('rightWordsInput').value;
+function showStatus(message, type = "info") {
+  const colorMap = {
+    info: "#2c3e50",
+    success: "#16a34a",
+    error: "#dc2626"
+  };
 
-            leftData = parseWords(leftInput);
-            rightData = parseWords(rightInput);
+  statusBar.textContent = message;
+  statusBar.style.color = colorMap[type] || colorMap.info;
 
-            if (leftData.length === 0 || rightData.length === 0) {
-                showStatus('왼쪽과 오른쪽 단어를 모두 입력해 주세요.', 'error');
-                return;
-            }
+  clearTimeout(statusTimer);
+  statusTimer = setTimeout(() => {
+    statusBar.textContent = "";
+  }, 2200);
+}
 
-            renderSlot('leftList', leftData);
-            renderSlot('rightList', rightData);
-            resetPosition('leftList');
-            resetPosition('rightList');
+function renderSlot(element, data) {
+  let html = "";
 
-            if (showMessage) {
-                showStatus('단어가 업데이트되었습니다.', 'success');
-            }
-        }
+  for (let i = 0; i < 15; i += 1) {
+    data.forEach((word) => {
+      html += `<li class="slot-item">${escapeHtml(word)}</li>`;
+    });
+  }
 
-        function renderSlot(id, data) {
-            const el = document.getElementById(id);
-            let html = '';
-            for (let i = 0; i < 15; i++) {
-                data.forEach(word => {
-                    html += `<li class="slot-item">${escapeHtml(word)}</li>`;
-                });
-            }
-            el.innerHTML = html;
-        }
+  element.innerHTML = html;
+}
 
-        function resetPosition(id) {
-            const el = document.getElementById(id);
-            el.style.transition = 'none';
-            el.style.transform = 'translateY(0)';
-        }
+function resetPosition(element) {
+  element.style.transition = "none";
+  element.style.transform = "translateY(0)";
+}
 
-        function spin(side, btn) {
-            const list = document.getElementById(side + 'List');
-            const data = side === 'left' ? leftData : rightData;
+function updateWords(showMessage = true) {
+  leftData = parseWords(leftWordsInput.value);
+  rightData = parseWords(rightWordsInput.value);
 
-            if (!data.length) {
-                showStatus('먼저 단어를 업데이트해 주세요.', 'error');
-                return;
-            }
+  if (leftData.length === 0 || rightData.length === 0) {
+    showStatus("왼쪽과 오른쪽 단어를 모두 입력해 주세요.", "error");
+    return;
+  }
 
-            btn.disabled = true;
-            list.style.transition = 'none';
-            list.style.transform = 'translateY(0)';
-            list.offsetHeight;
+  renderSlot(leftList, leftData);
+  renderSlot(rightList, rightData);
+  resetPosition(leftList);
+  resetPosition(rightList);
 
-            const randomIndex = Math.floor(Math.random() * data.length);
-            const moveY = ((data.length * 8) + randomIndex) * slotHeight;
+  if (showMessage) {
+    showStatus("단어가 업데이트되었습니다.", "success");
+  }
+}
 
-            list.style.transition = 'transform 2s cubic-bezier(0.15, 0, 0.15, 1)';
-            list.style.transform = `translateY(-${moveY}px)`;
+function spin(side, buttonElement) {
+  const listElement = side === "left" ? leftList : rightList;
+  const data = side === "left" ? leftData : rightData;
 
-            setTimeout(() => {
-                btn.disabled = false;
-            }, 2000);
-        }
+  if (!data.length) {
+    showStatus("먼저 단어를 업데이트해 주세요.", "error");
+    return;
+  }
 
-        function renderBuiltInPresets() {
-            const container = document.getElementById('presetButtons');
-            container.innerHTML = '';
+  buttonElement.disabled = true;
+  listElement.style.transition = "none";
+  listElement.style.transform = "translateY(0)";
+  listElement.offsetHeight;
 
-            Object.entries(builtInPresets).forEach(([name, words]) => {
-                const button = document.createElement('button');
-                button.className = 'preset-btn';
-                button.textContent = `${name} 복사`;
-                button.title = words;
-                button.onclick = () => copyPreset(words, `${name} 프리셋이 복사되었습니다.`);
-                container.appendChild(button);
-            });
-        }
+  const randomIndex = Math.floor(Math.random() * data.length);
+  const moveY = ((data.length * 8) + randomIndex) * slotHeight;
 
-        async function copyPreset(words, message = '복사되었습니다.') {
-            const ok = await copyText(words);
-            if (ok) {
-                showStatus(message, 'success');
-            } else {
-                showStatus('복사에 실패했습니다. 직접 선택해 복사해 주세요.', 'error');
-            }
-        }
+  listElement.style.transition = "transform 2s cubic-bezier(0.15, 0, 0.15, 1)";
+  listElement.style.transform = `translateY(-${moveY}px)`;
 
-        async function copyText(text) {
-            try {
-                if (navigator.clipboard && window.isSecureContext) {
-                    await navigator.clipboard.writeText(text);
-                    return true;
-                }
-            } catch (e) {}
+  window.setTimeout(() => {
+    buttonElement.disabled = false;
+  }, 2000);
+}
 
-            try {
-                const temp = document.createElement('textarea');
-                temp.value = text;
-                temp.style.position = 'fixed';
-                temp.style.left = '-9999px';
-                document.body.appendChild(temp);
-                temp.focus();
-                temp.select();
-                const ok = document.execCommand('copy');
-                document.body.removeChild(temp);
-                return ok;
-            } catch (e) {
-                return false;
-            }
-        }
+function renderBuiltInPresets() {
+  presetButtons.innerHTML = "";
 
-        function saveCustomPreset() {
-            const name = document.getElementById('customPresetName').value.trim();
-            const target = document.getElementById('customPresetTarget').value;
-            const wordsText = document.getElementById('customPresetWords').value.trim();
-            const wordsArray = parseWords(wordsText);
+  Object.entries(ROULETTE_BUILTIN_PRESETS).forEach(([name, words]) => {
+    const button = document.createElement("button");
+    button.className = "preset-btn";
+    button.textContent = `${name} 복사`;
+    button.title = words;
+    button.addEventListener("click", () => {
+      copyPreset(words, `${name} 프리셋이 복사되었습니다.`);
+    });
+    presetButtons.appendChild(button);
+  });
+}
 
-            if (!name) {
-                showStatus('커스텀 프리셋 이름을 입력해 주세요.', 'error');
-                return;
-            }
+async function copyText(text) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (error) {
+    // fallback below
+  }
 
-            if (wordsArray.length === 0) {
-                showStatus('커스텀 프리셋 단어를 입력해 주세요.', 'error');
-                return;
-            }
+  try {
+    const temp = document.createElement("textarea");
+    temp.value = text;
+    temp.style.position = "fixed";
+    temp.style.left = "-9999px";
+    document.body.appendChild(temp);
+    temp.focus();
+    temp.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(temp);
+    return ok;
+  } catch (error) {
+    return false;
+  }
+}
 
-            const preset = {
-                id: Date.now().toString(),
-                name,
-                target,
-                words: wordsArray.join(', ')
-            };
+async function copyPreset(words, message = "복사되었습니다.") {
+  const ok = await copyText(words);
 
-            customPresets.push(preset);
-            persistCustomPresets();
-            renderCustomPresets();
+  if (ok) {
+    showStatus(message, "success");
+  } else {
+    showStatus("복사에 실패했습니다. 직접 선택해 복사해 주세요.", "error");
+  }
+}
 
-            document.getElementById('customPresetName').value = '';
-            document.getElementById('customPresetWords').value = '';
-            document.getElementById('customPresetTarget').value = 'both';
+function persistCustomPresets() {
+  localStorage.setItem(ROULETTE_STORAGE_KEYS.customPresets, JSON.stringify(customPresets));
+}
 
-            showStatus('커스텀 프리셋이 저장되었습니다.', 'success');
-        }
+function loadCustomPresets() {
+  const saved = localStorage.getItem(ROULETTE_STORAGE_KEYS.customPresets);
+  customPresets = saved ? safeParse(saved, []) : [];
 
-        function renderCustomPresets() {
-            const container = document.getElementById('customPresetButtons');
-            container.innerHTML = '';
+  if (!Array.isArray(customPresets)) {
+    customPresets = [];
+  }
+}
 
-            if (customPresets.length === 0) {
-                container.innerHTML = '<span style="color:#6b7280;">저장된 커스텀 프리셋이 없습니다.</span>';
-                return;
-            }
+function renderCustomPresets() {
+  customPresetButtons.innerHTML = "";
 
-            customPresets.forEach(preset => {
-                const card = document.createElement('div');
-                card.className = 'custom-card';
-                card.title = `${preset.name}: ${preset.words}`;
+  if (customPresets.length === 0) {
+    const emptyText = document.createElement("span");
+    emptyText.className = "empty-text";
+    emptyText.textContent = "저장된 커스텀 프리셋이 없습니다.";
+    customPresetButtons.appendChild(emptyText);
+    return;
+  }
 
-                const label = document.createElement('span');
-                const targetLabelMap = { both: '공용', left: '왼쪽', right: '오른쪽' };
-                label.textContent = `${preset.name} (${targetLabelMap[preset.target] || '공용'})`;
-                card.appendChild(label);
+  customPresets.forEach((preset) => {
+    const card = document.createElement("div");
+    card.className = "custom-card";
+    card.title = `${preset.name}: ${preset.words}`;
 
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'mini-btn';
-                copyBtn.textContent = '복사';
-                copyBtn.onclick = () => copyPreset(preset.words, `${preset.name} 프리셋이 복사되었습니다.`);
-                card.appendChild(copyBtn);
+    const label = document.createElement("span");
+    const targetLabelMap = { both: "공용", left: "왼쪽", right: "오른쪽" };
+    label.textContent = `${preset.name} (${targetLabelMap[preset.target] || "공용"})`;
+    card.appendChild(label);
 
-                const applyLeftBtn = document.createElement('button');
-                applyLeftBtn.className = 'mini-btn';
-                applyLeftBtn.textContent = '왼쪽 적용';
-                applyLeftBtn.onclick = () => applyPresetToInput(preset.words, 'left');
-                card.appendChild(applyLeftBtn);
+    const copyBtn = document.createElement("button");
+    copyBtn.className = "mini-btn";
+    copyBtn.textContent = "복사";
+    copyBtn.addEventListener("click", () => {
+      copyPreset(preset.words, `${preset.name} 프리셋이 복사되었습니다.`);
+    });
+    card.appendChild(copyBtn);
 
-                const applyRightBtn = document.createElement('button');
-                applyRightBtn.className = 'mini-btn';
-                applyRightBtn.textContent = '오른쪽 적용';
-                applyRightBtn.onclick = () => applyPresetToInput(preset.words, 'right');
-                card.appendChild(applyRightBtn);
+    const applyLeftBtn = document.createElement("button");
+    applyLeftBtn.className = "mini-btn";
+    applyLeftBtn.textContent = "왼쪽 적용";
+    applyLeftBtn.addEventListener("click", () => {
+      applyPresetToInput(preset.words, "left");
+    });
+    card.appendChild(applyLeftBtn);
 
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'mini-btn delete-btn';
-                deleteBtn.textContent = '삭제';
-                deleteBtn.onclick = () => deleteCustomPreset(preset.id);
-                card.appendChild(deleteBtn);
+    const applyRightBtn = document.createElement("button");
+    applyRightBtn.className = "mini-btn";
+    applyRightBtn.textContent = "오른쪽 적용";
+    applyRightBtn.addEventListener("click", () => {
+      applyPresetToInput(preset.words, "right");
+    });
+    card.appendChild(applyRightBtn);
 
-                container.appendChild(card);
-            });
-        }
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "mini-btn delete-btn";
+    deleteBtn.textContent = "삭제";
+    deleteBtn.addEventListener("click", () => {
+      deleteCustomPreset(preset.id);
+    });
+    card.appendChild(deleteBtn);
 
-        function applyPresetToInput(words, side) {
-            const inputId = side === 'left' ? 'leftWordsInput' : 'rightWordsInput';
-            document.getElementById(inputId).value = words;
-            updateWords(false);
-            showStatus(`${side === 'left' ? '왼쪽' : '오른쪽'} 입력칸에 적용되었습니다.`, 'success');
-        }
+    customPresetButtons.appendChild(card);
+  });
+}
 
-        function deleteCustomPreset(id) {
-            customPresets = customPresets.filter(preset => preset.id !== id);
-            persistCustomPresets();
-            renderCustomPresets();
-            showStatus('커스텀 프리셋이 삭제되었습니다.', 'success');
-        }
+function saveCustomPreset() {
+  const name = customPresetName.value.trim();
+  const target = customPresetTarget.value;
+  const wordsText = customPresetWords.value.trim();
+  const wordsArray = parseWords(wordsText);
 
-        function persistCustomPresets() {
-            localStorage.setItem(STORAGE_KEYS.customPresets, JSON.stringify(customPresets));
-        }
+  if (!name) {
+    showStatus("커스텀 프리셋 이름을 입력해 주세요.", "error");
+    return;
+  }
 
-        function loadCustomPresets() {
-            const saved = localStorage.getItem(STORAGE_KEYS.customPresets);
-            if (!saved) {
-                customPresets = [];
-                return;
-            }
+  if (wordsArray.length === 0) {
+    showStatus("커스텀 프리셋 단어를 입력해 주세요.", "error");
+    return;
+  }
 
-            try {
-                customPresets = JSON.parse(saved) || [];
-            } catch (e) {
-                customPresets = [];
-            }
-        }
+  const preset = {
+    id: Date.now().toString(),
+    name,
+    target,
+    words: wordsArray.join(", ")
+  };
 
-        function saveCurrentState() {
-            const state = {
-                leftInput: document.getElementById('leftWordsInput').value,
-                rightInput: document.getElementById('rightWordsInput').value,
-                sentence: document.getElementById('sentenceBox').value
-            };
-            localStorage.setItem(STORAGE_KEYS.state, JSON.stringify(state));
-            showStatus('현재 상태가 브라우저에 저장되었습니다.', 'success');
-        }
+  customPresets.push(preset);
+  persistCustomPresets();
+  renderCustomPresets();
 
-        function loadSavedState() {
-            const saved = localStorage.getItem(STORAGE_KEYS.state);
-            const state = saved ? safeParse(saved, defaultState) : defaultState;
+  customPresetName.value = "";
+  customPresetWords.value = "";
+  customPresetTarget.value = "both";
 
-            document.getElementById('leftWordsInput').value = state.leftInput || defaultState.leftInput;
-            document.getElementById('rightWordsInput').value = state.rightInput || defaultState.rightInput;
-            document.getElementById('sentenceBox').value = state.sentence || '';
-        }
+  showStatus("커스텀 프리셋이 저장되었습니다.", "success");
+}
 
-        function safeParse(text, fallback) {
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                return fallback;
-            }
-        }
+function applyPresetToInput(words, side) {
+  if (side === "left") {
+    leftWordsInput.value = words;
+  } else {
+    rightWordsInput.value = words;
+  }
 
-        function resetAll() {
-            const shouldReset = confirm('현재 입력값, 저장된 상태, 커스텀 프리셋을 모두 초기화할까요?');
-            if (!shouldReset) return;
+  updateWords(false);
+  showStatus(`${side === "left" ? "왼쪽" : "오른쪽"} 입력칸에 적용되었습니다.`, "success");
+}
 
-            localStorage.removeItem(STORAGE_KEYS.state);
-            localStorage.removeItem(STORAGE_KEYS.customPresets);
-            customPresets = [];
+function deleteCustomPreset(id) {
+  customPresets = customPresets.filter((preset) => preset.id !== id);
+  persistCustomPresets();
+  renderCustomPresets();
+  showStatus("커스텀 프리셋이 삭제되었습니다.", "success");
+}
 
-            document.getElementById('leftWordsInput').value = defaultState.leftInput;
-            document.getElementById('rightWordsInput').value = defaultState.rightInput;
-            document.getElementById('sentenceBox').value = '';
-            document.getElementById('customPresetName').value = '';
-            document.getElementById('customPresetWords').value = '';
-            document.getElementById('customPresetTarget').value = 'both';
+function saveCurrentState() {
+  const state = {
+    leftInput: leftWordsInput.value,
+    rightInput: rightWordsInput.value,
+    sentence: sentenceBox.value
+  };
 
-            renderCustomPresets();
-            updateWords(false);
-            showStatus('초기화되었습니다.', 'success');
-        }
+  localStorage.setItem(ROULETTE_STORAGE_KEYS.state, JSON.stringify(state));
+  showStatus("현재 상태가 브라우저에 저장되었습니다.", "success");
+}
 
-        function escapeHtml(text) {
-            return text
-                .replace(/&/g, '&amp;')
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/"/g, '&quot;')
-                .replace(/'/g, '&#039;');
-        }
+function loadSavedState() {
+  const saved = localStorage.getItem(ROULETTE_STORAGE_KEYS.state);
+  const state = saved ? safeParse(saved, ROULETTE_DEFAULT_STATE) : ROULETTE_DEFAULT_STATE;
 
-        function init() {
-            loadSavedState();
-            loadCustomPresets();
-            renderBuiltInPresets();
-            renderCustomPresets();
-            updateWords(false);
-        }
+  leftWordsInput.value = state.leftInput || ROULETTE_DEFAULT_STATE.leftInput;
+  rightWordsInput.value = state.rightInput || ROULETTE_DEFAULT_STATE.rightInput;
+  sentenceBox.value = state.sentence || "";
+}
 
-        init();
+function resetAll() {
+  const shouldReset = window.confirm("현재 입력값, 저장된 상태, 커스텀 프리셋을 모두 초기화할까요?");
+  if (!shouldReset) return;
+
+  localStorage.removeItem(ROULETTE_STORAGE_KEYS.state);
+  localStorage.removeItem(ROULETTE_STORAGE_KEYS.customPresets);
+  customPresets = [];
+
+  leftWordsInput.value = ROULETTE_DEFAULT_STATE.leftInput;
+  rightWordsInput.value = ROULETTE_DEFAULT_STATE.rightInput;
+  sentenceBox.value = "";
+  customPresetName.value = "";
+  customPresetWords.value = "";
+  customPresetTarget.value = "both";
+
+  renderCustomPresets();
+  updateWords(false);
+  showStatus("초기화되었습니다.", "success");
+}
+
+function bindEvents() {
+  leftSpinButton.addEventListener("click", () => {
+    spin("left", leftSpinButton);
+  });
+
+  rightSpinButton.addEventListener("click", () => {
+    spin("right", rightSpinButton);
+  });
+
+  updateWordsButton.addEventListener("click", () => {
+    updateWords(true);
+  });
+
+  saveStateButton.addEventListener("click", saveCurrentState);
+  resetButton.addEventListener("click", resetAll);
+  saveCustomPresetButton.addEventListener("click", saveCustomPreset);
+}
+
+function init() {
+  loadSavedState();
+  loadCustomPresets();
+  renderBuiltInPresets();
+  renderCustomPresets();
+  updateWords(false);
+  bindEvents();
+}
+
+document.addEventListener("DOMContentLoaded", init);
