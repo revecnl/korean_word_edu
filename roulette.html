@@ -1,4 +1,40 @@
 <!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>랜덤 문장 만들기 | 한국어 수업 활동 도구</title>
+  <link rel="stylesheet" href="./assets/css/roulette.css" />
+</head>
+<body>
+  <div class="top-nav">
+    <a class="home-btn" href="./index.html">← 로비로 돌아가기</a>
+  </div>
+
+  <h1>🎰 랜덤 문장 만들기</h1>
+  <div id="statusBar" class="status-bar"></div>
+
+  <div class="main-layout">
+    <div class="slot-unit">
+      <div class="slot-machine">
+        <ul class="slot-list" id="leftList"></ul>
+      </div>
+      <button class="spin-btn left-btn" id="leftSpinButton">인물 뽑기</button>
+    </div>
+
+    <textarea id="sentenceBox" class="text-area" placeholder="문장을 만들어보세요."></textarea>
+
+    <div class="slot-unit">
+      <div class="slot-machine">
+        <ul class="slot-list" id="rightList"></ul>
+      </div>
+      <button class="spin-btn right-btn" id="rightSpinButton">직업 뽑기</button>
+    </div>
+  </div>
+
+  <div class="settings">
+    <h2 class="section-title">단어 설정</h2>
+
     <div class="input-group">
       <label for="leftWordsInput">왼쪽 단어 (쉼표 구분)</label>
       <input type="text" id="leftWordsInput" class="word-input" />
@@ -23,7 +59,9 @@
 
     <div class="custom-preset-area">
       <h2 class="section-title">커스텀 프리셋</h2>
-      <p class="preset-help">이름과 단어 목록을 저장하면 브라우저에 유지됩니다. 저장된 버튼을 누르면 단어 목록이 복사됩니다.</p>
+      <p class="preset-help">
+        이름과 단어 목록을 저장하면 브라우저에 유지됩니다. 저장된 버튼을 누르면 단어 목록이 복사됩니다.
+      </p>
 
       <div class="custom-form">
         <input type="text" id="customPresetName" class="custom-input" placeholder="예: 음식" />
@@ -32,7 +70,12 @@
           <option value="left">왼쪽용</option>
           <option value="right">오른쪽용</option>
         </select>
-        <input type="text" id="customPresetWords" class="custom-input" placeholder="단어 8개 이상을 쉼표로 구분해 입력" />
+        <input
+          type="text"
+          id="customPresetWords"
+          class="custom-input"
+          placeholder="단어 8개 이상을 쉼표로 구분해 입력"
+        />
         <button class="custom-btn" id="saveCustomPresetButton">커스텀 저장</button>
       </div>
 
@@ -60,7 +103,7 @@
       ☕ 커피 한 잔으로 진쌤 응원하기
     </a>
   </div>
-<link rel="stylesheet" href="./assets/css/roulette.css" />
+
   <script src="./assets/js/roulette-presets.js"></script>
   <script src="./assets/js/roulette.js"></script>
 </body>
