@@ -30,6 +30,16 @@ const programCards = [
     href: "./family-intro.html"
   },
   {
+    id: "flashcard",
+    title: "그림카드 뒤집기",
+    description:
+      "카드를 클릭하면 뒤집히면서 그림, 이름, 설명을 확인할 수 있는 활동입니다. 가족, 물건, 직업 프리셋과 커스텀 카드 제작을 지원합니다.",
+    tags: ["그림카드", "뒤집기 활동", "프리셋", "커스텀 제작"],
+    status: "live",
+    buttonText: "프로그램 실행",
+    href: "./flashcard.html"
+  },
+  {
     id: "new-program",
     title: "새 활동 프로그램",
     description: "추후 추가될 프로그램 공간입니다.",
