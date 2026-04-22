@@ -55,6 +55,7 @@ var presetData = {
     { id: makeId(), category: 'object', name: '의자', description: '앉을 때 사용하는 물건이에요.', image: 'assets/pic/object/chair.png' },
     { id: makeId(), category: 'object', name: '책상', description: '공부하거나 일할 때 사용하는 물건이에요.', image: 'assets/pic/object/desk.png' },
     { id: makeId(), category: 'object', name: '젓가락', description: '음식을 먹을 때 사용하는 물건이에요.', image: 'assets/pic/object/chopsticks.png' },
+    { id: makeId(), category: 'object', name: '숟가락', description: '음식을 먹을 때 사용하는 물건이에요.', image: 'assets/pic/object/spoon.png' },
     { id: makeId(), category: 'object', name: '컴퓨터', description: '공부하거나 일할 때 자주 사용하는 기기예요.', image: 'assets/pic/object/computer.png' },
     { id: makeId(), category: 'object', name: '연필', description: '글씨를 쓸 때 사용하는 물건이에요.', image: 'assets/pic/object/pencil.png' },
     { id: makeId(), category: 'object', name: '시계', description: '시간을 확인할 때 사용하는 물건이에요.', image: 'assets/pic/object/clock.png' },
