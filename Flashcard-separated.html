@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>그림카드 뒤집기</title>
+  <link rel="stylesheet" href="flashcard.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <a class="back-link" href="index.html">로비로 돌아가기</a>
+    </div>
+
+    <section class="header">
+      <h1>그림카드 뒤집기</h1>
+      <p>카드를 클릭하면 뒷면으로 뒤집히며 이름과 설명이 나옵니다. 가족, 물건, 직업 프리셋을 사용할 수 있고, 교사가 직접 커스텀 카드도 만들 수 있습니다.</p>
+    </section>
+
+    <div class="layout">
+      <aside class="panel">
+        <h2>설정</h2>
+
+        <h3>프리셋</h3>
+        <div class="button-row">
+          <button class="primary" data-preset="family">가족</button>
+          <button class="primary" data-preset="object">물건</button>
+          <button class="primary" data-preset="job">직업</button>
+          <button class="secondary" id="loadCustomBtn">커스텀</button>
+        </div>
+        <small class="hint">이미지는 세 가지 방식으로 넣을 수 있습니다. ① GitHub 경로 ② 외부 이미지 URL ③ 내 컴퓨터 로컬 이미지 업로드</small>
+
+        <h3>카드 제어</h3>
+        <div class="button-row">
+          <button class="secondary" id="flipAllBtn">전체 뒤집기</button>
+          <button class="secondary" id="resetFlipBtn">앞면 초기화</button>
+          <button class="success" id="saveCustomBtn">커스텀 저장</button>
+          <button class="danger" id="clearCustomBtn">커스텀 삭제</button>
+        </div>
+        <div class="message" id="statusMessage"></div>
+
+        <h3>커스텀 카드 추가 / 수정</h3>
+        <div class="input-group">
+          <label for="cardCategory">카테고리</label>
+          <select id="cardCategory">
+            <option value="family">가족</option>
+            <option value="object">물건</option>
+            <option value="job">직업</option>
+            <option value="custom">기타</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label for="cardName">카드 이름</label>
+          <input type="text" id="cardName" placeholder="예: 아버지" />
+        </div>
+        <div class="input-group">
+          <label for="cardDescription">카드 설명</label>
+          <textarea id="cardDescription" placeholder="예: 아버지나 어머니의 아버지예요."></textarea>
+        </div>
+        <div class="input-group">
+          <label for="cardImagePath">이미지 경로 또는 이미지 URL</label>
+          <input type="text" id="cardImagePath" placeholder="예: assets/pic/family/grandfather.png 또는 https://example.com/image.png" />
+        </div>
+        <div class="input-group">
+          <label for="cardImageFile">로컬 이미지 파일 업로드</label>
+          <input type="file" id="cardImageFile" accept="image/png,image/jpeg,image/webp,image/gif" />
+          <small class="hint">권장 제한: 2MB 이하, 1600×1600 이하. 너무 큰 이미지는 업로드되지 않습니다.</small>
+          <div class="preview-box" id="uploadPreview">
+            <div class="preview-placeholder">선택한 이미지 미리보기가 여기에 표시됩니다.</div>
+          </div>
+        </div>
+        <div class="button-row">
+          <button class="primary" id="addCardBtn">카드 추가</button>
+          <button class="warning" id="updateCardBtn">선택 카드 수정</button>
+          <button class="secondary" id="cancelEditBtn">수정 취소</button>
+        </div>
+
+        <div class="list-box" id="customCardList"></div>
+      </aside>
+
+      <main>
+        <div class="stats">
+          <div class="stat-box">현재 세트: <strong id="currentSetName">가족</strong></div>
+          <div class="stat-box">카드 수: <strong id="cardCount">0</strong></div>
+          <div class="stat-box">뒤집힌 카드: <strong id="flippedCount">0</strong></div>
+        </div>
+        <section class="card-grid" id="cardGrid"></section>
+      </main>
+    </div>
+  </div>
+
+  <script src="flashcard.js"></script>
+</body>
+</html>
