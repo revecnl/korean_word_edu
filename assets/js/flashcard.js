@@ -47,8 +47,8 @@ var presetData = {
   ],
 
   // 예시) family 프리셋에 카드 1장 추가
-    // ,{ id: makeId(), category: 'family', name: '삼촌', description: '아버지나 어머니의 남자 형제예요.', image: 'assets/pic/family/uncle.png' }
-  
+  // ,{ id: makeId(), category: 'family', name: '삼촌', description: '아버지나 어머니의 남자 형제예요.', image: 'assets/pic/family/uncle.png' }
+
   object: [
     { id: makeId(), category: 'object', name: '책', description: '읽을 때 사용하는 물건이에요.', image: 'assets/pic/object/book.png' },
     { id: makeId(), category: 'object', name: '가방', description: '물건을 넣어 가지고 다니는 물건이에요.', image: 'assets/pic/object/bag.png' },
@@ -62,6 +62,7 @@ var presetData = {
     { id: makeId(), category: 'object', name: '핸드폰', description: '전화하거나 메시지를 보낼 때 사용하는 물건이에요.', image: 'assets/pic/object/phone.png' },
     { id: makeId(), category: 'object', name: '컵', description: '물을 마실 때 사용하는 물건이에요.', image: 'assets/pic/object/cup.png' }
   ],
+
   job: [
     { id: makeId(), category: 'job', name: '선생님', description: '학생을 가르치는 직업이에요.', image: 'assets/pic/job/teacher.png' },
     { id: makeId(), category: 'job', name: '의사', description: '아픈 사람을 진료하는 직업이에요.', image: 'assets/pic/job/doctor.png' },
@@ -75,11 +76,11 @@ var presetData = {
 };
 
 // 예시) 새 프리셋 카테고리 추가
-  // ,
-  // place: [
-  //   { id: makeId(), category: 'place', name: '학교', description: '공부하는 장소예요.', image: 'assets/pic/place/school.png' },
-  //   { id: makeId(), category: 'place', name: '집', description: '가족과 함께 사는 장소예요.', image: 'assets/pic/place/home.png' }
-  // ]
+// ,
+// place: [
+//   { id: makeId(), category: 'place', name: '학교', description: '공부하는 장소예요.', image: 'assets/pic/place/school.png' },
+//   { id: makeId(), category: 'place', name: '집', description: '가족과 함께 사는 장소예요.', image: 'assets/pic/place/home.png' }
+// ]
 
 var currentSetName = 'family';
 var cards = cloneCards(presetData.family);
@@ -116,7 +117,7 @@ function nameLabel(key) {
     job: '직업',
     custom: '커스텀'
 
-        // 예시) 새 프리셋 카테고리 표시명 추가
+    // 예시) 새 프리셋 카테고리 표시명 추가
     // ,place: '장소'
   };
   return labels[key] || key;
@@ -128,6 +129,13 @@ function setMessage(text) {
   setMessage.timer = setTimeout(function() {
     statusMessageEl.textContent = '';
   }, 2400);
+}
+
+function updateCardStats() {
+  cardCountEl.textContent = String(cards.length);
+  flippedCountEl.textContent = String(cards.filter(function(card) {
+    return card.flipped;
+  }).length);
 }
 
 function loadCustomCards() {
@@ -383,10 +391,16 @@ function flipAllCards() {
   var hasFront = cards.some(function(card) {
     return !card.flipped;
   });
+
   cards.forEach(function(card) {
     card.flipped = hasFront;
   });
-  renderCards();
+
+  cardGrid.querySelectorAll('.flip-card').forEach(function(cardEl, index) {
+    cardEl.classList.toggle('flipped', cards[index].flipped);
+  });
+
+  updateCardStats();
   setMessage(hasFront ? '전체 카드를 뒤집었습니다.' : '전체 카드를 앞면으로 돌렸습니다.');
 }
 
@@ -394,7 +408,12 @@ function resetFlips() {
   cards.forEach(function(card) {
     card.flipped = false;
   });
-  renderCards();
+
+  cardGrid.querySelectorAll('.flip-card').forEach(function(cardEl) {
+    cardEl.classList.remove('flipped');
+  });
+
+  updateCardStats();
   setMessage('모든 카드를 앞면으로 초기화했습니다.');
 }
 
@@ -410,8 +429,7 @@ function renderCards() {
 
   if (!cards.length) {
     cardGrid.appendChild(createPlaceholder('표시할 카드가 없습니다.', 'empty-box'));
-    cardCountEl.textContent = '0';
-    flippedCountEl.textContent = '0';
+    updateCardStats();
     return;
   }
 
@@ -474,16 +492,14 @@ function renderCards() {
 
     article.addEventListener('click', function() {
       card.flipped = !card.flipped;
-      renderCards();
+      article.classList.toggle('flipped', card.flipped);
+      updateCardStats();
     });
 
     cardGrid.appendChild(article);
   });
 
-  cardCountEl.textContent = String(cards.length);
-  flippedCountEl.textContent = String(cards.filter(function(card) {
-    return card.flipped;
-  }).length);
+  updateCardStats();
 }
 
 function renderCustomList() {
