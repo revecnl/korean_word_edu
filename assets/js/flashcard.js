@@ -21,6 +21,19 @@ function cloneCards(list) {
   });
 }
 
+/* =========================
+   프리셋 데이터 설정 영역
+   =========================
+   [수정 방법]
+   1. 기존 프리셋 카드 내용을 바꾸고 싶으면
+      - family / object / job 안의 카드 객체를 수정합니다.
+   2. 기존 프리셋에 카드를 더 추가하고 싶으면
+      - 해당 배열 안에 같은 형식의 객체를 한 줄 더 추가합니다.
+   3. 새 프리셋 카테고리를 만들고 싶으면
+      - 아래처럼 place, food 같은 새 배열을 추가합니다.
+   4. image 경로는 실제 업로드한 파일 경로와 반드시 같아야 합니다.
+*/
+
 var presetData = {
   family: [
     { id: makeId(), category: 'family', name: '할아버지', description: '아버지나 어머니의 아버지예요.', image: 'assets/pic/family/grandfather.png' },
@@ -32,6 +45,10 @@ var presetData = {
     { id: makeId(), category: 'family', name: '남동생', description: '나보다 나이가 어린 남자 형제예요.', image: 'assets/pic/family/brother-younger.png' },
     { id: makeId(), category: 'family', name: '여동생', description: '나보다 나이가 어린 여자 형제예요.', image: 'assets/pic/family/sister-younger.png' }
   ],
+
+  // 예시) family 프리셋에 카드 1장 추가
+    // ,{ id: makeId(), category: 'family', name: '삼촌', description: '아버지나 어머니의 남자 형제예요.', image: 'assets/pic/family/uncle.png' }
+  
   object: [
     { id: makeId(), category: 'object', name: '책', description: '읽을 때 사용하는 물건이에요.', image: 'assets/pic/object/book.png' },
     { id: makeId(), category: 'object', name: '가방', description: '물건을 넣어 가지고 다니는 물건이에요.', image: 'assets/pic/object/bag.png' },
@@ -54,6 +71,13 @@ var presetData = {
   ]
 };
 
+// 예시) 새 프리셋 카테고리 추가
+  // ,
+  // place: [
+  //   { id: makeId(), category: 'place', name: '학교', description: '공부하는 장소예요.', image: 'assets/pic/place/school.png' },
+  //   { id: makeId(), category: 'place', name: '집', description: '가족과 함께 사는 장소예요.', image: 'assets/pic/place/home.png' }
+  // ]
+
 var currentSetName = 'family';
 var cards = cloneCards(presetData.family);
 var customCards = loadCustomCards();
@@ -73,12 +97,24 @@ var cardDescriptionEl = document.getElementById('cardDescription');
 var cardImagePathEl = document.getElementById('cardImagePath');
 var cardImageFileEl = document.getElementById('cardImageFile');
 
+/* =========================
+   카테고리 한글 이름 표시 영역
+   =========================
+   [수정 방법]
+   1. family / object / job 처럼 presetData의 키와 맞춰서 적습니다.
+   2. 새 프리셋을 만들었다면 여기에도 같은 키를 추가합니다.
+   3. 이 값은 카드 뒷면 배지, 현재 세트 이름 등에 표시됩니다.
+*/
+
 function nameLabel(key) {
   var labels = {
     family: '가족',
     object: '물건',
     job: '직업',
     custom: '커스텀'
+
+        // 예시) 새 프리셋 카테고리 표시명 추가
+    // ,place: '장소'
   };
   return labels[key] || key;
 }
