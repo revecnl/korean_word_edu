@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>가계도를 만들어 봐요.</title>
+  <title>내 가족 가계도 활동</title>
   <style>
     * { box-sizing: border-box; }
 
@@ -17,10 +17,7 @@
       --slot-bg: #ffffff;
       --card-bg: #e8f0ff;
       --card-border: #b6c8f5;
-      --extra-card-bg: #fff7ed;
-      --extra-card-border: #fed7aa;
       --accent: #3b82f6;
-      --accent-2: #f97316;
       --wrong: #f472b6;
       --wrong-bg: #fdf2f8;
       --correct: #86efac;
@@ -36,7 +33,7 @@
     }
 
     .page {
-      max-width: 1320px;
+      max-width: 1380px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -62,15 +59,9 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns: 340px 1fr;
       gap: 20px;
       align-items: start;
-    }
-
-    .left-column {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
     }
 
     .panel {
@@ -80,29 +71,25 @@
       box-shadow: var(--shadow);
     }
 
-    .panel h2 {
-      margin: 0 0 12px;
-      font-size: 20px;
-    }
-
-    .panel p {
-      margin: 0 0 16px;
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
     .panel-header {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 10px;
       flex-wrap: wrap;
       margin-bottom: 12px;
     }
 
-    .panel-header h2 {
+    .panel h2 {
       margin: 0;
+      font-size: 20px;
+    }
+
+    .panel p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
     }
 
     .button-row {
@@ -112,39 +99,61 @@
     }
 
     .tool-btn {
-      padding: 10px 14px;
       border: none;
       border-radius: 12px;
+      padding: 10px 14px;
       font-weight: 700;
       cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
       color: white;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
-    .tool-btn:hover {
-      transform: translateY(-1px);
-    }
-
+    .tool-btn:hover { transform: translateY(-1px); }
     .tool-btn.primary {
       background: var(--accent);
       box-shadow: 0 8px 16px rgba(59, 130, 246, 0.18);
     }
 
-    .tool-btn.orange {
-      background: linear-gradient(135deg, #fb923c 0%, #f97316 100%);
-      box-shadow: 0 8px 16px rgba(249, 115, 22, 0.18);
-    }
-
-    .tool-btn.gray {
+    .tool-btn.secondary {
       background: #64748b;
       box-shadow: 0 8px 16px rgba(100, 116, 139, 0.18);
+    }
+
+    .tool-btn.secondary {
+      background: #64748b;
+      box-shadow: 0 8px 16px rgba(100, 116, 139, 0.18);
+    }
+
+    .gender-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .gender-btn {
+      border: 1px solid #dbe4f0;
+      background: #f8fbff;
+      color: #334155;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .gender-btn.active {
+      background: #e8f0ff;
+      border-color: #8cb3ff;
+      color: #1d4ed8;
+      box-shadow: 0 8px 16px rgba(59, 130, 246, 0.12);
     }
 
     .card-list {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      min-height: 78px;
+      min-height: 88px;
       padding: 4px;
       border-radius: 16px;
     }
@@ -155,8 +164,8 @@
     }
 
     .card {
-      min-width: 110px;
-      min-height: 58px;
+      min-width: 120px;
+      min-height: 60px;
       padding: 14px 16px;
       border-radius: 16px;
       border: 1px solid var(--card-border);
@@ -165,7 +174,7 @@
       align-items: center;
       justify-content: center;
       text-align: center;
-      font-weight: 700;
+      font-weight: 800;
       cursor: grab;
       user-select: none;
       -webkit-user-drag: none;
@@ -176,28 +185,9 @@
       transition: opacity 0.15s ease, transform 0.15s ease;
     }
 
-    .card:active {
-      cursor: grabbing;
-    }
-
-    .card:hover {
-      transform: translateY(-1px);
-    }
-
-    .card.extra-card {
-      background: var(--extra-card-bg);
-      border-color: var(--extra-card-border);
-      box-shadow: 0 4px 10px rgba(249, 115, 22, 0.08);
-    }
-
-    .card.locked {
-      cursor: default;
-      opacity: 0.72;
-    }
-
-    .card.dragging-source {
-      opacity: 0.32;
-    }
+    .card:hover { transform: translateY(-1px); }
+    .card:active { cursor: grabbing; }
+    .card.dragging-source { opacity: 0.32; }
 
     .drag-ghost {
       position: fixed;
@@ -208,6 +198,94 @@
       margin: 0;
       transform: translate(-50%, -50%) scale(1.04);
       box-shadow: 0 16px 28px rgba(15, 23, 42, 0.18);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.44);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 2000;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: 86vh;
+      overflow-y: auto;
+      background: #ffffff;
+      border-radius: 24px;
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+      padding: 22px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    .close-btn {
+      border: none;
+      background: #eef2f7;
+      color: #334155;
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .modal-desc {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    .vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .vocab-card {
+      border: 1px solid #dbe4f0;
+      background: linear-gradient(180deg, #f9fbff 0%, #f3f7ff 100%);
+      border-radius: 18px;
+      padding: 16px;
+      box-shadow: 0 8px 18px rgba(59, 130, 246, 0.06);
+    }
+
+    .vocab-card h4 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      color: #1d4ed8;
+    }
+
+    .vocab-card p {
+      margin: 0;
+      font-size: 14px;
+      color: #475569;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+      .vocab-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .card::after {
@@ -255,10 +333,6 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    .tree-panel {
-      overflow-x: auto;
-    }
-
     .feedback {
       margin: 0 0 14px;
       font-size: 14px;
@@ -267,22 +341,18 @@
       font-weight: 600;
     }
 
+    .tree-panel { overflow-x: auto; }
+
     .tree-wrap {
+      min-width: 1120px;
       position: relative;
       padding: 20px 10px 10px;
-      min-width: 780px;
-    }
-
-    .tree-wrap.mode-standard {
-      min-width: 780px;
-    }
-
-    .tree-wrap.mode-extended {
-      min-width: 1040px;
     }
 
     .tree {
       position: relative;
+      width: 1100px;
+      height: 760px;
       margin: 0 auto;
       border-radius: 24px;
       background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
@@ -303,21 +373,67 @@
       stroke-linecap: round;
     }
 
-    .tree-standard {
-      width: 760px;
-      height: 620px;
-      display: none;
+    .tree-note {
+      position: absolute;
+      background: #eef4ff;
+      color: #47618d;
+      border: 1px solid #dbe7ff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      z-index: 2;
     }
 
-    .tree-extended {
-      width: 1020px;
-      height: 720px;
-      display: none;
+    .tree-note::after {
+      content: attr(data-desc);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 14px);
+      transform: translateX(-50%) translateY(6px);
+      min-width: 180px;
+      max-width: 260px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(17, 24, 39, 0.94);
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      white-space: normal;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+      z-index: 40;
     }
 
-    .tree.active {
-      display: block !important;
+    .tree-note::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 6px);
+      transform: translateX(-50%) translateY(6px);
+      border-width: 8px;
+      border-style: solid;
+      border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 39;
     }
+
+    .tree-note:hover::after,
+    .tree-note:hover::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .note-maternal { top: 24px; left: 150px; }
+    .note-paternal { top: 24px; right: 150px; }
+    .note-parents { top: 230px; left: 50%; transform: translateX(-50%); }
+    .note-siblings { top: 430px; left: 50%; transform: translateX(-50%); }
 
     .slot {
       position: absolute;
@@ -338,14 +454,14 @@
       background: #eff6ff;
     }
 
-    .slot.wrong {
-      border-color: var(--wrong);
-      background: var(--wrong-bg);
-    }
-
     .slot.correct {
       border-color: var(--correct);
       background: var(--correct-bg);
+    }
+
+    .slot.wrong {
+      border-color: var(--wrong);
+      background: var(--wrong-bg);
     }
 
     .slot-label {
@@ -361,6 +477,13 @@
       font-weight: 700;
       white-space: nowrap;
       color: #475569;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .tree.show-hints .slot-label {
+      opacity: 1;
     }
 
     .slot .card {
@@ -369,323 +492,290 @@
       min-height: 72px;
     }
 
-    .tree-note {
-      position: absolute;
-      left: 18px;
-      background: #eef4ff;
-      color: #47618d;
-      border: 1px solid #dbe7ff;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 13px;
-      font-weight: 800;
-      z-index: 2;
+    .me-slot {
+      background: linear-gradient(180deg, #f2f5fb 0%, #eef2f7 100%);
+      border-style: solid;
+      border-color: #d7dfea;
     }
 
-    .note-top { top: 18px; }
-    .note-middle { top: 220px; }
-    .note-bottom { top: 490px; }
-    .note-side-top { top: 220px; right: 18px; left: auto; }
-    .note-side-bottom { top: 490px; right: 18px; left: auto; }
+    .slot-mg { top: 70px; left: 80px; }
+    .slot-mgm { top: 70px; left: 280px; }
+    .slot-pg { top: 70px; left: 670px; }
+    .slot-pgm { top: 70px; left: 870px; }
 
-    /* 기본형 자리 */
-    .std-grandfather { top: 60px; left: 120px; }
-    .std-grandmother { top: 60px; right: 120px; }
-    .std-father { top: 260px; left: 120px; }
-    .std-mother { top: 260px; right: 120px; }
-    .std-older { top: 470px; left: 20px; }
-    .std-me { top: 470px; left: 305px; }
-    .std-younger { top: 470px; right: 20px; }
+    .slot-mother { top: 270px; left: 180px; }
+    .slot-father { top: 270px; left: 770px; }
 
-    /* 확장형 자리 */
-    .ext-grand-1 { top: 60px; left: 280px; }
-    .ext-grand-2 { top: 60px; right: 280px; }
-
-    .ext-parent-1 { top: 260px; left: 120px; }
-    .ext-parent-2 { top: 260px; left: 310px; }
-    .ext-parent-3 { top: 260px; left: 500px; }
-    .ext-parent-4 { top: 260px; left: 690px; }
-
-    .ext-child-1 { top: 500px; left: 215px; }
-    .ext-child-2 { top: 500px; left: 425px; }
-    .ext-child-3 { top: 500px; left: 595px; }
-    .ext-child-4 { top: 500px; left: 765px; }
+    .slot-older-sister { top: 500px; left: 70px; }
+    .slot-older-brother { top: 500px; left: 260px; }
+    .slot-me { top: 470px; left: 475px; width: 150px; min-height: 120px; }
+    .slot-younger { top: 500px; left: 770px; }
 
     @media (max-width: 980px) {
       .layout {
         grid-template-columns: 1fr;
       }
-
-      .left-column {
-        gap: 16px;
-      }
-
-      .card-list {
-        justify-content: center;
-      }
     }
 
     @media (max-width: 640px) {
-      .page {
-        padding: 14px;
-      }
-
-      .header h1 {
-        font-size: 24px;
-      }
-
-      .panel {
-        padding: 14px;
-      }
-
-      .tool-btn {
-        width: 100%;
-      }
+      .page { padding: 14px; }
+      .header h1 { font-size: 24px; }
+      .tool-btn { width: 100%; }
     }
-.top-nav {
-  max-width: 1320px;
-  margin: 0 auto;
-  padding: 20px 20px 0;
-}
-
-.home-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border-radius: 999px;
-  border: none;
-  background: #1f2937;
-  color: white;
-  text-decoration: none;
-  font-weight: 700;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-
-.home-btn:hover {
-  opacity: 0.92;
-}
-
-@media (max-width: 640px) {
-  .top-nav {
-    padding: 14px 14px 0;
-  }
-}
   </style>
 </head>
 <body>
-      <div class="top-nav">
-        <a class="home-btn" href="./index.html">← 로비로 돌아가기</a>
-    </div>
   <div class="page">
     <section class="header">
-      <h1>가계도를 만들어 보아요.</h1>
-      <p>카드를 드래그해서 가계도에 배치해 보세요. 기본형과 확장형을 전환할 수 있으며, 카드를 놓으면 바로 정답 여부를 확인합니다.</p>
+      <h1>내 가족 가계도 활동</h1>
+      <p>내 가족을 중심으로 가족 호칭을 배치해 보세요. ‘나’의 성별을 선택하면 손위 형제자매 호칭이 바뀝니다.</p>
     </section>
 
     <section class="layout">
-      <div class="left-column">
-        <div class="panel">
-          <div class="panel-header">
-            <h2>인물 카드</h2>
-            <div class="button-row">
-              <button class="tool-btn primary" id="resetBtn">초기화</button>
-            </div>
-          </div>
-          <p>기본 가족 카드를 끌어서 원하는 자리에 놓아 보세요. 같은 세대 안에서는 어느 칸에 놓아도 정답으로 처리됩니다.</p>
-          <div class="card-list" id="cardList">
-            <div class="card" draggable="true" id="card-grandfather" data-generation="1" data-home="main" data-desc="할아버지는 아버지 또는 어머니의 아버지예요.">할아버지</div>
-            <div class="card" draggable="true" id="card-grandmother" data-generation="1" data-home="main" data-desc="할머니는 아버지 또는 어머니의 어머니예요.">할머니</div>
-            <div class="card" draggable="true" id="card-father" data-generation="2" data-home="main" data-desc="아버지는 나와 형제자매들의 아버지예요.">아버지</div>
-            <div class="card" draggable="true" id="card-mother" data-generation="2" data-home="main" data-desc="어머니는 나와 형제자매들의 어머니예요.">어머니</div>
-            <div class="card" draggable="true" id="card-older" data-generation="3" data-home="main" data-desc="형 또는 누나는 나보다 나이가 많은 형제자매예요.">형/누나</div>
-            <div class="card" draggable="true" id="card-me" data-generation="3" data-home="main" data-desc="나는 이 가족 관계를 기준으로 자신을 가리키는 말이에요.">나</div>
-            <div class="card" draggable="true" id="card-younger" data-generation="3" data-home="main" data-desc="동생은 나보다 나이가 어린 형제자매예요.">동생</div>
+      <div class="panel">
+        <div class="panel-header">
+          <h2>인물 카드</h2>
+          <div class="button-row">
+            <button class="tool-btn primary" id="resetBtn">초기화</button>
+            <button class="tool-btn secondary" id="hintToggleBtn" type="button">자리 힌트 보기</button>
+            <button class="tool-btn secondary" id="openVocabBtn" type="button">확장어휘 보기</button>
           </div>
         </div>
 
-        <div class="panel">
-          <div class="panel-header">
-            <h2>추가 어휘</h2>
-            <div class="button-row">
-              <button class="tool-btn orange" id="toggleModeBtn">확장버전</button>
-            </div>
-          </div>
-          <p id="extraHelp">추가 어휘 카드는 기본형에서는 설명용입니다. 확장버전을 누르면 드래그해서 배치할 수 있습니다.</p>
-          <div class="card-list" id="extraCardList">
-            <div class="card extra-card locked" draggable="false" id="card-aunt" data-generation="2" data-home="extra" data-desc="고모는 아버지의 여자 형제이고, 이모는 어머니의 여자 형제예요.">고모/이모</div>
-            <div class="card extra-card locked" draggable="false" id="card-uncle" data-generation="2" data-home="extra" data-desc="큰/작은 아버지는 아버지의 남자 형제를, 외삼촌은 어머니의 남자 형제를 가리켜요.">큰/작은 아버지/외삼촌</div>
-            <div class="card extra-card locked" draggable="false" id="card-cousin" data-generation="3" data-home="extra" data-desc="사촌은 고모, 이모, 큰/작은 아버지, 외삼촌의 자녀예요.">사촌</div>
-          </div>
+        <div class="gender-toggle">
+          <button class="gender-btn active" id="maleBtn" type="button">나 = 남자</button>
+          <button class="gender-btn" id="femaleBtn" type="button">나 = 여자</button>
+        </div>
+
+        <p id="helpText">카드를 드래그해서 가계도에 놓아 보세요. 손위 형제자매 호칭은 ‘나’의 성별에 따라 바뀝니다. 큰 카테고리는 항상 보이고, 버튼을 누르면 개별 자리 힌트만 표시됩니다.</p>
+
+        <div class="card-list" id="cardList">
+          <div class="card" data-role="maternal_grandfather" data-label="외할아버지">외할아버지</div>
+          <div class="card" data-role="maternal_grandmother" data-label="외할머니">외할머니</div>
+          <div class="card" data-role="paternal_grandfather" data-label="친할아버지">친할아버지</div>
+          <div class="card" data-role="paternal_grandmother" data-label="친할머니">친할머니</div>
+          <div class="card" data-role="mother" data-label="어머니">어머니</div>
+          <div class="card" data-role="father" data-label="아버지">아버지</div>
+          <div class="card" data-role="older_sister" data-label="누나">누나</div>
+          <div class="card" data-role="older_brother" data-label="형">형</div>
+          <div class="card" data-role="me" data-label="나">나</div>
+          <div class="card" data-role="younger" data-label="동생">동생</div>
         </div>
       </div>
 
       <div class="panel tree-panel">
-        <p class="feedback" id="feedback">기본형 가계도입니다. 카드를 배치해 보세요.</p>
-        <div class="tree-wrap mode-standard" id="treeWrap">
-          <div class="tree tree-standard active" id="standardTree">
-            <div class="tree-note note-top">조부모</div>
-            <div class="tree-note note-middle">부모</div>
-            <div class="tree-note note-bottom">자녀</div>
-            <svg viewBox="0 0 760 620" aria-hidden="true">
-              <line x1="270" y1="105" x2="490" y2="105"></line>
-              <line x1="380" y1="105" x2="380" y2="225"></line>
-              <line x1="270" y1="305" x2="490" y2="305"></line>
-              <line x1="380" y1="225" x2="380" y2="260"></line>
-              <line x1="380" y1="305" x2="380" y2="440"></line>
-              <line x1="95" y1="515" x2="665" y2="515"></line>
-              <line x1="380" y1="440" x2="380" y2="515"></line>
+        <p class="feedback" id="feedback">내 가족 가계도입니다. 카드를 배치해 보세요.</p>
+
+        <div class="tree-wrap">
+          <div class="tree">
+            <div class="tree-note note-maternal" data-desc="외가는 어머니 쪽 가족을 말해요.">외가</div>
+            <div class="tree-note note-paternal" data-desc="친가는 아버지 쪽 가족을 말해요.">친가</div>
+            <div class="tree-note note-parents" data-desc="부모는 아버지와 어머니를 함께 가리키는 말이에요.">부모</div>
+            <div class="tree-note note-siblings" data-desc="형제자매는 형, 누나, 오빠, 언니, 남동생, 여동생을 함께 가리키는 말이에요.">형제자매 / 나</div>
+
+            <svg viewBox="0 0 1100 760" aria-hidden="true">
+              <line x1="155" y1="115" x2="355" y2="115"></line>
+              <line x1="255" y1="115" x2="255" y2="260"></line>
+
+              <line x1="745" y1="115" x2="945" y2="115"></line>
+              <line x1="845" y1="115" x2="845" y2="260"></line>
+
+              <line x1="255" y1="315" x2="845" y2="315"></line>
+              <line x1="550" y1="315" x2="550" y2="450"></line>
+
+              <line x1="145" y1="470" x2="845" y2="470"></line>
+              <line x1="145" y1="470" x2="145" y2="500"></line>
+              <line x1="335" y1="470" x2="335" y2="500"></line>
+              <line x1="550" y1="470" x2="550" y2="470"></line>
+              <line x1="845" y1="470" x2="845" y2="500"></line>
             </svg>
-            <div class="slot std-grandfather" data-generation="1"><span class="slot-label">조부모</span></div>
-            <div class="slot std-grandmother" data-generation="1"><span class="slot-label">조부모</span></div>
-            <div class="slot std-father" data-generation="2"><span class="slot-label">부모</span></div>
-            <div class="slot std-mother" data-generation="2"><span class="slot-label">부모</span></div>
-            <div class="slot std-older" data-generation="3"><span class="slot-label">자녀</span></div>
-            <div class="slot std-me" data-generation="3"><span class="slot-label">자녀</span></div>
-            <div class="slot std-younger" data-generation="3"><span class="slot-label">자녀</span></div>
-          </div>
 
-          <div class="tree tree-extended" id="extendedTree">
-            <div class="tree-note note-top">조부모</div>
-            <div class="tree-note note-middle">부모 / 부모 세대 친척</div>
-            <div class="tree-note note-bottom">자녀 / 자녀 세대 친척</div>
-            <svg viewBox="0 0 1020 720" aria-hidden="true">
-              <line x1="430" y1="105" x2="590" y2="105"></line>
-              <line x1="510" y1="105" x2="510" y2="180"></line>
-              <line x1="290" y1="180" x2="670" y2="180"></line>
+            <div class="slot slot-mg" data-role="maternal_grandfather"><span class="slot-label">외할아버지</span></div>
+            <div class="slot slot-mgm" data-role="maternal_grandmother"><span class="slot-label">외할머니</span></div>
+            <div class="slot slot-pg" data-role="paternal_grandfather"><span class="slot-label">친할아버지</span></div>
+            <div class="slot slot-pgm" data-role="paternal_grandmother"><span class="slot-label">친할머니</span></div>
 
-              <line x1="290" y1="180" x2="290" y2="305"></line>
-              <line x1="670" y1="180" x2="670" y2="305"></line>
-              <line x1="195" y1="305" x2="385" y2="305"></line>
-              <line x1="575" y1="305" x2="765" y2="305"></line>
+            <div class="slot slot-mother" data-role="mother"><span class="slot-label">어머니</span></div>
+            <div class="slot slot-father" data-role="father"><span class="slot-label">아버지</span></div>
 
-              <line x1="290" y1="305" x2="290" y2="545"></line>
-
-              <line x1="670" y1="305" x2="670" y2="545"></line>
-              <line x1="500" y1="545" x2="840" y2="545"></line>
-            </svg>
-            <div class="slot ext-grand-1" data-generation="1"><span class="slot-label">조부모</span></div>
-            <div class="slot ext-grand-2" data-generation="1"><span class="slot-label">조부모</span></div>
-
-            <div class="slot ext-parent-1" data-generation="2"><span class="slot-label">부모 세대</span></div>
-            <div class="slot ext-parent-2" data-generation="2"><span class="slot-label">부모 세대</span></div>
-            <div class="slot ext-parent-3" data-generation="2"><span class="slot-label">부모 세대</span></div>
-            <div class="slot ext-parent-4" data-generation="2"><span class="slot-label">부모 세대</span></div>
-
-            <div class="slot ext-child-1" data-generation="3"><span class="slot-label">사촌</span></div>
-            <div class="slot ext-child-2" data-generation="3"><span class="slot-label">자녀 세대</span></div>
-            <div class="slot ext-child-3" data-generation="3"><span class="slot-label">자녀 세대</span></div>
-            <div class="slot ext-child-4" data-generation="3"><span class="slot-label">자녀 세대</span></div>
+            <div class="slot slot-older-sister" data-role="older_sister"><span class="slot-label" data-slot-label="older_sister">누나</span></div>
+            <div class="slot slot-older-brother" data-role="older_brother"><span class="slot-label" data-slot-label="older_brother">형</span></div>
+            <div class="slot slot-me me-slot" data-role="me"><span class="slot-label" data-slot-label="me">나</span></div>
+            <div class="slot slot-younger" data-role="younger"><span class="slot-label">동생</span></div>
           </div>
         </div>
       </div>
     </section>
 
-    <div id="jinssem-shelter" style="text-align: center; margin: 80px auto 40px; padding: 45px 20px; border-radius: 28px; background-color: #ffffff; border: 1px solid #f2f2f2; max-width: 550px; box-shadow: 0 10px 25px rgba(0,0,0,0.04);">
-      <div style="margin-bottom: 25px;">
-        <h3 style="margin: 0; color: #333; font-size: 1.4rem; font-weight: 800;">진쌤's 한국어 교원 쉘터</h3>
-        <p style="color: #777; font-size: 0.95rem; line-height: 1.6; margin-top: 10px; padding: 0 20px;">
-          "교육과 창작의 즐거움을 나누는 공간입니다.<br>
-          따뜻한 커피 한 잔으로 응원해주세요!"
-        </p>
-      </div>
-
-      <a href="https://www.postype.com/@revecnl-edu/post/22042434" target="_blank" style="display: inline-flex; align-items: center; justify-content: center; gap: 12px; width: 85%; padding: 18px; background: linear-gradient(135deg, #ff9e57 0%, #ff7e36 100%); color: white; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 17px; box-shadow: 0 6px 20px rgba(255, 126, 54, 0.3); transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 8px 25px rgba(255, 126, 54, 0.5)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(255, 126, 54, 0.3)'">
-        <span>☕ 커피 한 잔으로 진쌤 응원하기</span>
-      </a>
-
-      <div style="margin-top: 25px; border-top: 1px solid #f9f9f9; padding-top: 20px;">
-        <p style="color: #bbb; font-size: 0.8rem; letter-spacing: 1px; margin: 0;">REVOLUTIONIZING EDUCATION & CREATION</p>
+    <div class="modal-backdrop" id="vocabModal" aria-hidden="true">
+      <div class="modal" role="dialog" aria-modal="true" aria-labelledby="vocabModalTitle">
+        <div class="modal-header">
+          <h3 id="vocabModalTitle">혈연 친척 확장어휘</h3>
+          <button class="close-btn" id="closeVocabBtn" type="button">닫기</button>
+        </div>
+        <p class="modal-desc">내 가족 가계도 다음 단계에서 함께 익히는 친척 어휘입니다. 친가와 외가를 구분해서 볼 수 있도록 정리했습니다.</p>
+        <div class="vocab-grid">
+          <div class="vocab-card">
+            <h4>큰아버지</h4>
+            <p>큰아버지는 아버지의 형이에요.</p>
+          </div>
+          <div class="vocab-card">
+            <h4>작은아버지</h4>
+            <p>작은아버지는 아버지의 남동생이에요.</p>
+          </div>
+          <div class="vocab-card">
+            <h4>고모</h4>
+            <p>고모는 아버지의 여자 형제예요.</p>
+          </div>
+          <div class="vocab-card">
+            <h4>이모</h4>
+            <p>이모는 어머니의 여자 형제예요.</p>
+          </div>
+          <div class="vocab-card">
+            <h4>외삼촌</h4>
+            <p>외삼촌은 어머니의 남자 형제예요.</p>
+          </div>
+          <div class="vocab-card">
+            <h4>사촌</h4>
+            <p>사촌은 큰아버지, 작은아버지, 고모, 이모, 외삼촌의 자녀예요.</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
     const cardList = document.getElementById('cardList');
-    const extraCardList = document.getElementById('extraCardList');
     const resetBtn = document.getElementById('resetBtn');
-    const toggleModeBtn = document.getElementById('toggleModeBtn');
+    const hintToggleBtn = document.getElementById('hintToggleBtn');
+    const openVocabBtn = document.getElementById('openVocabBtn');
+    const closeVocabBtn = document.getElementById('closeVocabBtn');
+    const vocabModal = document.getElementById('vocabModal');
     const feedback = document.getElementById('feedback');
-    const extraHelp = document.getElementById('extraHelp');
-    const standardTree = document.getElementById('standardTree');
-    const extendedTree = document.getElementById('extendedTree');
-    const treeWrap = document.getElementById('treeWrap');
+    const maleBtn = document.getElementById('maleBtn');
+    const femaleBtn = document.getElementById('femaleBtn');
+    const tree = document.querySelector('.tree');
 
-    let isExtendedMode = false;
+    let myGender = 'male';
+    let hintsVisible = false;
     let dragState = null;
 
-    function getAllCards() {
+    function getCards() {
       return [...document.querySelectorAll('.card')];
     }
 
-    function getExtraCards() {
-      return [...document.querySelectorAll('.extra-card')];
+    function getSlots() {
+      return [...document.querySelectorAll('.slot')];
     }
 
-    function getVisibleTree() {
-      return isExtendedMode ? extendedTree : standardTree;
-    }
-
-    function getVisibleSlots() {
-      return [...getVisibleTree().querySelectorAll('.slot')];
-    }
-
-    function getHomeContainer(card) {
-      return card.dataset.home === 'extra' ? extraCardList : cardList;
-    }
-
-    function isCardMovable(card) {
-      return !card.classList.contains('locked');
-    }
-
-    function updateExtraCardState() {
-      getExtraCards().forEach((card) => {
-        card.classList.toggle('locked', !isExtendedMode);
-      });
-
-      if (isExtendedMode) {
-        extraHelp.textContent = '확장형 가계도입니다. 추가 어휘 카드도 드래그해서 배치할 수 있습니다.';
-        toggleModeBtn.textContent = '기본버전';
-        toggleModeBtn.classList.remove('orange');
-        toggleModeBtn.classList.add('gray');
-      } else {
-        extraHelp.textContent = '추가 어휘 카드는 기본형에서는 설명용입니다. 확장버전을 누르면 드래그해서 배치할 수 있습니다.';
-        toggleModeBtn.textContent = '확장버전';
-        toggleModeBtn.classList.remove('gray');
-        toggleModeBtn.classList.add('orange');
+    function getRoleConfig() {
+      if (myGender === 'male') {
+        return {
+          older_sister: {
+            label: '누나',
+            desc: '누나는 나보다 나이가 많은 여자 형제자매를 남자가 부르는 말이에요.'
+          },
+          older_brother: {
+            label: '형',
+            desc: '형은 나보다 나이가 많은 남자 형제자매를 남자가 부르는 말이에요.'
+          },
+          me: {
+            label: '나',
+            desc: '이 카드는 남자인 나 자신을 가리켜요.'
+          }
+        };
       }
+
+      return {
+        older_sister: {
+          label: '언니',
+          desc: '언니는 나보다 나이가 많은 여자 형제자매를 여자가 부르는 말이에요.'
+        },
+        older_brother: {
+          label: '오빠',
+          desc: '오빠는 나보다 나이가 많은 남자 형제자매를 여자가 부르는 말이에요.'
+        },
+        me: {
+          label: '나',
+          desc: '이 카드는 여자인 나 자신을 가리켜요.'
+        }
+      };
     }
 
-    function clearSlotStates() {
-      document.querySelectorAll('.slot').forEach((slot) => {
-        slot.classList.remove('wrong', 'correct', 'over');
+    function applyCardMeta(card, label, desc) {
+      card.textContent = label;
+      card.dataset.label = label;
+      card.dataset.desc = desc;
+    }
+
+    function updateHintState() {
+      tree.classList.toggle('show-hints', hintsVisible);
+      hintToggleBtn.textContent = hintsVisible ? '자리 힌트 숨기기' : '자리 힌트 보기';
+    }
+
+    function updateLabelsByGender() {
+      const config = getRoleConfig();
+
+      const baseMeta = {
+        maternal_grandfather: ['외할아버지', '외할아버지는 어머니의 아버지예요.'],
+        maternal_grandmother: ['외할머니', '외할머니는 어머니의 어머니예요.'],
+        paternal_grandfather: ['친할아버지', '친할아버지는 아버지의 아버지예요.'],
+        paternal_grandmother: ['친할머니', '친할머니는 아버지의 어머니예요.'],
+        mother: ['어머니', '어머니는 나와 형제자매들의 어머니예요.'],
+        father: ['아버지', '아버지는 나와 형제자매들의 아버지예요.'],
+        younger: ['동생', '동생은 나보다 나이가 어린 형제자매예요.']
+      };
+
+      getCards().forEach((card) => {
+        const role = card.dataset.role;
+        if (baseMeta[role]) {
+          applyCardMeta(card, baseMeta[role][0], baseMeta[role][1]);
+        }
       });
-      document.querySelectorAll('.card-list').forEach((list) => {
-        list.classList.remove('drop-over');
-      });
+
+      const olderSisterCard = document.querySelector('.card[data-role="older_sister"]');
+      const olderBrotherCard = document.querySelector('.card[data-role="older_brother"]');
+      const meCard = document.querySelector('.card[data-role="me"]');
+
+      applyCardMeta(olderSisterCard, config.older_sister.label, config.older_sister.desc);
+      applyCardMeta(olderBrotherCard, config.older_brother.label, config.older_brother.desc);
+      applyCardMeta(meCard, config.me.label, config.me.desc);
+
+      document.querySelector('[data-slot-label="older_sister"]').textContent = config.older_sister.label;
+      document.querySelector('[data-slot-label="older_brother"]').textContent = config.older_brother.label;
+      document.querySelector('[data-slot-label="me"]').textContent = '나';
+
+      maleBtn.classList.toggle('active', myGender === 'male');
+      femaleBtn.classList.toggle('active', myGender === 'female');
+
+      checkAnswers();
+    }
+
+    function clearStates() {
+      getSlots().forEach((slot) => slot.classList.remove('wrong', 'correct', 'over'));
+      cardList.classList.remove('drop-over');
     }
 
     function resetAllCards() {
-      getAllCards().forEach((card) => {
-        getHomeContainer(card).appendChild(card);
+      getCards().forEach((card) => {
+        cardList.appendChild(card);
       });
-      clearSlotStates();
+      clearStates();
       checkAnswers();
     }
 
     function checkAnswers() {
-      clearSlotStates();
+      clearStates();
 
-      const visibleSlots = getVisibleSlots();
       let placedCount = 0;
       let correctCount = 0;
 
-      visibleSlots.forEach((slot) => {
-        const placedCard = slot.querySelector('.card');
-        if (!placedCard) return;
-
+      getSlots().forEach((slot) => {
+        const card = slot.querySelector('.card');
+        if (!card) return;
         placedCount += 1;
-        if (placedCard.dataset.generation === slot.dataset.generation) {
+
+        if (card.dataset.role === slot.dataset.role) {
           slot.classList.add('correct');
           correctCount += 1;
         } else {
@@ -694,16 +784,12 @@
       });
 
       if (placedCount === 0) {
-        feedback.textContent = isExtendedMode
-          ? '확장형 가계도입니다. 부모 세대 친척과 자녀 세대 친척 자리까지 함께 배치해 보세요.'
-          : '기본형 가계도입니다. 카드를 배치해 보세요.';
+        feedback.textContent = '내 가족 가계도입니다. 카드를 배치해 보세요.';
         return;
       }
 
-      if (correctCount === visibleSlots.length) {
-        feedback.textContent = isExtendedMode
-          ? '정답입니다. 확장형 가계도의 모든 카드가 올바른 세대에 배치되었습니다.'
-          : '정답입니다. 모든 카드가 올바른 세대에 배치되었습니다.';
+      if (correctCount === getSlots().length) {
+        feedback.textContent = '정답입니다. 모든 가족 호칭이 올바른 자리에 배치되었습니다.';
         return;
       }
 
@@ -711,33 +797,23 @@
       feedback.textContent = `현재 ${placedCount}개 배치됨 · 정답 ${correctCount}개 · 틀림 ${wrongCount}개`;
     }
 
-    function placeCardToTarget(target, droppedCard) {
-      const existingCard = target.querySelector('.card');
-      if (existingCard && existingCard !== droppedCard) {
-        getHomeContainer(existingCard).appendChild(existingCard);
+    function placeCard(target, card) {
+      const existing = target.querySelector('.card');
+      if (existing && existing !== card) {
+        cardList.appendChild(existing);
       }
-      target.appendChild(droppedCard);
+      target.appendChild(card);
       checkAnswers();
     }
 
-    function clearDropHighlights() {
-      document.querySelectorAll('.slot').forEach((slot) => slot.classList.remove('over'));
-      document.querySelectorAll('.card-list').forEach((list) => list.classList.remove('drop-over'));
-    }
-
     function findDropTarget(clientX, clientY) {
-      const element = document.elementFromPoint(clientX, clientY);
-      if (!element) return null;
-      const target = element.closest('.slot, .card-list');
-      if (!target) return null;
-      if (target.classList.contains('slot')) {
-        return getVisibleTree().contains(target) ? target : null;
-      }
-      return target;
+      const el = document.elementFromPoint(clientX, clientY);
+      if (!el) return null;
+      return el.closest('.slot, .card-list');
     }
 
-    function highlightDropTarget(target) {
-      clearDropHighlights();
+    function highlightTarget(target) {
+      clearStates();
       if (!target) return;
       if (target.classList.contains('slot')) {
         target.classList.add('over');
@@ -752,7 +828,7 @@
       dragState.ghost.style.top = `${clientY}px`;
       const target = findDropTarget(clientX, clientY);
       dragState.currentTarget = target;
-      highlightDropTarget(target);
+      highlightTarget(target);
     }
 
     function finishDrag(clientX, clientY) {
@@ -761,14 +837,14 @@
       const { card, ghost, originParent } = dragState;
       const target = findDropTarget(clientX, clientY) || dragState.currentTarget;
 
-      clearDropHighlights();
+      clearStates();
       card.classList.remove('dragging-source');
       ghost.remove();
 
       if (target) {
         if (target.classList.contains('slot')) {
-          placeCardToTarget(target, card);
-        } else if (target.classList.contains('card-list')) {
+          placeCard(target, card);
+        } else {
           target.appendChild(card);
           checkAnswers();
         }
@@ -794,22 +870,17 @@
     }
 
     function enableCardDrag(card) {
-      if (card.dataset.pointerBound === 'true') return;
-      card.dataset.pointerBound = 'true';
-
       card.addEventListener('dragstart', (event) => {
         event.preventDefault();
       });
 
       card.addEventListener('pointerdown', (event) => {
-        if (!isCardMovable(card)) return;
         if (event.button !== undefined && event.button !== 0) return;
-
         event.preventDefault();
 
         const rect = card.getBoundingClientRect();
         const ghost = card.cloneNode(true);
-        ghost.classList.remove('locked', 'dragging-source');
+        ghost.classList.remove('dragging-source');
         ghost.classList.add('drag-ghost');
         ghost.style.width = `${rect.width}px`;
         ghost.style.height = `${rect.height}px`;
@@ -833,31 +904,42 @@
       });
     }
 
-    function switchMode() {
-      isExtendedMode = !isExtendedMode;
-
-      if (isExtendedMode) {
-        standardTree.classList.remove('active');
-        extendedTree.classList.add('active');
-        treeWrap.classList.remove('mode-standard');
-        treeWrap.classList.add('mode-extended');
-      } else {
-        extendedTree.classList.remove('active');
-        standardTree.classList.add('active');
-        treeWrap.classList.remove('mode-extended');
-        treeWrap.classList.add('mode-standard');
-      }
-
-      updateExtraCardState();
-      resetAllCards();
-    }
-
-    getAllCards().forEach(enableCardDrag);
-
+    getCards().forEach(enableCardDrag);
     resetBtn.addEventListener('click', resetAllCards);
-    toggleModeBtn.addEventListener('click', switchMode);
+    hintToggleBtn.addEventListener('click', () => {
+      hintsVisible = !hintsVisible;
+      updateHintState();
+    });
 
-    updateExtraCardState();
+    openVocabBtn.addEventListener('click', () => {
+      vocabModal.classList.add('open');
+      vocabModal.setAttribute('aria-hidden', 'false');
+    });
+
+    closeVocabBtn.addEventListener('click', () => {
+      vocabModal.classList.remove('open');
+      vocabModal.setAttribute('aria-hidden', 'true');
+    });
+
+    vocabModal.addEventListener('click', (event) => {
+      if (event.target === vocabModal) {
+        vocabModal.classList.remove('open');
+        vocabModal.setAttribute('aria-hidden', 'true');
+      }
+    });
+
+    maleBtn.addEventListener('click', () => {
+      myGender = 'male';
+      updateLabelsByGender();
+    });
+
+    femaleBtn.addEventListener('click', () => {
+      myGender = 'female';
+      updateLabelsByGender();
+    });
+
+    updateLabelsByGender();
+    updateHintState();
     checkAnswers();
   </script>
 </body>
