@@ -255,6 +255,26 @@
       font-size: 14px;
     }
 
+    .vocab-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .vocab-section {
+      border: 1px solid #e6edf7;
+      border-radius: 20px;
+      padding: 16px;
+      background: #fcfdff;
+    }
+
+    .vocab-section-title {
+      margin: 0 0 12px;
+      font-size: 17px;
+      font-weight: 900;
+      color: #334155;
+    }
+
     .vocab-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -430,8 +450,8 @@
       transform: translateX(-50%) translateY(0);
     }
 
-    .note-maternal { top: 24px; left: 150px; }
-    .note-paternal { top: 24px; right: 150px; }
+    .note-maternal { top: 24px; right: 150px; }
+    .note-paternal { top: 24px; left: 150px; }
     .note-parents { top: 230px; left: 50%; transform: translateX(-50%); }
     .note-siblings { top: 430px; left: 50%; transform: translateX(-50%); }
 
@@ -498,13 +518,13 @@
       border-color: #d7dfea;
     }
 
-    .slot-mg { top: 70px; left: 80px; }
-    .slot-mgm { top: 70px; left: 280px; }
-    .slot-pg { top: 70px; left: 670px; }
-    .slot-pgm { top: 70px; left: 870px; }
+    .slot-mg { top: 70px; left: 670px; }
+    .slot-mgm { top: 70px; left: 870px; }
+    .slot-pg { top: 70px; left: 80px; }
+    .slot-pgm { top: 70px; left: 280px; }
 
-    .slot-mother { top: 270px; left: 180px; }
-    .slot-father { top: 270px; left: 770px; }
+    .slot-mother { top: 270px; left: 770px; }
+    .slot-father { top: 270px; left: 180px; }
 
     .slot-older-sister { top: 500px; left: 70px; }
     .slot-older-brother { top: 500px; left: 260px; }
@@ -613,32 +633,49 @@
           <h3 id="vocabModalTitle">혈연 친척 확장어휘</h3>
           <button class="close-btn" id="closeVocabBtn" type="button">닫기</button>
         </div>
-        <p class="modal-desc">내 가족 가계도 다음 단계에서 함께 익히는 친척 어휘입니다. 친가와 외가를 구분해서 볼 수 있도록 정리했습니다.</p>
-        <div class="vocab-grid">
-          <div class="vocab-card">
-            <h4>큰아버지</h4>
-            <p>큰아버지는 아버지의 형이에요.</p>
-          </div>
-          <div class="vocab-card">
-            <h4>작은아버지</h4>
-            <p>작은아버지는 아버지의 남동생이에요.</p>
-          </div>
-          <div class="vocab-card">
-            <h4>고모</h4>
-            <p>고모는 아버지의 여자 형제예요.</p>
-          </div>
-          <div class="vocab-card">
-            <h4>이모</h4>
-            <p>이모는 어머니의 여자 형제예요.</p>
-          </div>
-          <div class="vocab-card">
-            <h4>외삼촌</h4>
-            <p>외삼촌은 어머니의 남자 형제예요.</p>
-          </div>
-          <div class="vocab-card">
-            <h4>사촌</h4>
-            <p>사촌은 큰아버지, 작은아버지, 고모, 이모, 외삼촌의 자녀예요.</p>
-          </div>
+        <p class="modal-desc">내 가족 가계도 다음 단계에서 함께 익히는 친척 어휘입니다. 친가와 외가를 나누고, 공통 어휘는 따로 묶어 보았습니다.</p>
+        <div class="vocab-sections">
+          <section class="vocab-section">
+            <h4 class="vocab-section-title">친가</h4>
+            <div class="vocab-grid">
+              <div class="vocab-card">
+                <h4>큰아버지</h4>
+                <p>큰아버지는 아버지의 형이에요.</p>
+              </div>
+              <div class="vocab-card">
+                <h4>작은아버지</h4>
+                <p>작은아버지는 아버지의 남동생이에요.</p>
+              </div>
+              <div class="vocab-card">
+                <h4>고모</h4>
+                <p>고모는 아버지의 여자 형제예요.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="vocab-section">
+            <h4 class="vocab-section-title">외가</h4>
+            <div class="vocab-grid">
+              <div class="vocab-card">
+                <h4>이모</h4>
+                <p>이모는 어머니의 여자 형제예요.</p>
+              </div>
+              <div class="vocab-card">
+                <h4>외삼촌</h4>
+                <p>외삼촌은 어머니의 남자 형제예요.</p>
+              </div>
+            </div>
+          </section>
+
+          <section class="vocab-section">
+            <h4 class="vocab-section-title">공통</h4>
+            <div class="vocab-grid">
+              <div class="vocab-card">
+                <h4>사촌</h4>
+                <p>사촌은 큰아버지, 작은아버지, 고모, 이모, 외삼촌의 자녀예요.</p>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
     </div>
