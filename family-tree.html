@@ -33,17 +33,17 @@
     }
 
     .page {
-      max-width: 1700px;
+      max-width: 1380px;
       margin: 0 auto;
-      padding: 14px;
+      padding: 20px;
     }
 
     .header {
       background: var(--panel);
       border-radius: 20px;
-      padding: 18px 20px;
+      padding: 20px;
       box-shadow: var(--shadow);
-      margin-bottom: 16px;
+      margin-bottom: 20px;
     }
 
     .header h1 {
@@ -59,15 +59,15 @@
 
     .layout {
       display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 16px;
+      grid-template-columns: 340px 1fr;
+      gap: 20px;
       align-items: start;
     }
 
     .panel {
       background: var(--panel);
       border-radius: 20px;
-      padding: 16px;
+      padding: 18px;
       box-shadow: var(--shadow);
     }
 
@@ -106,14 +106,17 @@
       cursor: pointer;
       color: white;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
-      white-space: nowrap;
     }
 
     .tool-btn:hover { transform: translateY(-1px); }
-
     .tool-btn.primary {
       background: var(--accent);
       box-shadow: 0 8px 16px rgba(59, 130, 246, 0.18);
+    }
+
+    .tool-btn.secondary {
+      background: #64748b;
+      box-shadow: 0 8px 16px rgba(100, 116, 139, 0.18);
     }
 
     .tool-btn.secondary {
@@ -161,8 +164,8 @@
     }
 
     .card {
-      min-width: 110px;
-      min-height: 58px;
+      min-width: 120px;
+      min-height: 60px;
       padding: 14px 16px;
       border-radius: 16px;
       border: 1px solid var(--card-border);
@@ -197,252 +200,6 @@
       box-shadow: 0 16px 28px rgba(15, 23, 42, 0.18);
     }
 
-    .card::after {
-      content: attr(data-desc);
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 14px);
-      transform: translateX(-50%) translateY(6px);
-      min-width: 190px;
-      max-width: 280px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(17, 24, 39, 0.94);
-      color: white;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.5;
-      text-align: left;
-      white-space: normal;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      z-index: 30;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 6px);
-      transform: translateX(-50%) translateY(6px);
-      border-width: 8px;
-      border-style: solid;
-      border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      z-index: 29;
-    }
-
-    .card:hover::after,
-    .card:hover::before {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .feedback {
-      margin: 0 0 12px;
-      font-size: 14px;
-      color: var(--muted);
-      line-height: 1.6;
-      font-weight: 600;
-    }
-
-    .tree-panel {
-      overflow: hidden;
-    }
-
-    .tree-fit-area {
-      width: 100%;
-      overflow-x: auto;
-      overflow-y: hidden;
-      padding-bottom: 4px;
-    }
-
-    .tree-viewport {
-      position: relative;
-      margin: 0 auto;
-    }
-
-    .tree-shell {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 1100px;
-      height: 760px;
-      transform-origin: top left;
-    }
-
-    .tree {
-      position: relative;
-      width: 1100px;
-      height: 760px;
-      border-radius: 24px;
-      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
-      border: 1px solid #edf2f7;
-      overflow: hidden;
-    }
-
-    .tree svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .tree line {
-      stroke: var(--line);
-      stroke-width: 4;
-      stroke-linecap: round;
-    }
-
-    .tree-note {
-      position: absolute;
-      background: #eef4ff;
-      color: #47618d;
-      border: 1px solid #dbe7ff;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 13px;
-      font-weight: 800;
-      z-index: 2;
-    }
-
-    .tree-note::after {
-      content: attr(data-desc);
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 14px);
-      transform: translateX(-50%) translateY(6px);
-      min-width: 180px;
-      max-width: 260px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      background: rgba(17, 24, 39, 0.94);
-      color: white;
-      font-size: 13px;
-      font-weight: 500;
-      line-height: 1.5;
-      text-align: left;
-      white-space: normal;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
-      z-index: 40;
-    }
-
-    .tree-note::before {
-      content: "";
-      position: absolute;
-      left: 50%;
-      bottom: calc(100% + 6px);
-      transform: translateX(-50%) translateY(6px);
-      border-width: 8px;
-      border-style: solid;
-      border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease, transform 0.18s ease;
-      z-index: 39;
-    }
-
-    .tree-note:hover::after,
-    .tree-note:hover::before {
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .note-paternal { top: 24px; left: 150px; }
-    .note-maternal { top: 24px; right: 150px; }
-    .note-parents { top: 230px; left: 50%; transform: translateX(-50%); }
-    .note-siblings { top: 430px; left: 50%; transform: translateX(-50%); }
-
-    .slot {
-      position: absolute;
-      width: 150px;
-      min-height: 92px;
-      border: 2px dashed var(--slot-border);
-      border-radius: 18px;
-      background: var(--slot-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-      transition: border-color 0.15s ease, background 0.15s ease;
-    }
-
-    .slot.over {
-      border-color: var(--accent);
-      background: #eff6ff;
-    }
-
-    .slot.correct {
-      border-color: var(--correct);
-      background: var(--correct-bg);
-    }
-
-    .slot.wrong {
-      border-color: var(--wrong);
-      background: var(--wrong-bg);
-    }
-
-    .slot-label {
-      position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #fff;
-      border: 1px solid #dbe4f0;
-      border-radius: 999px;
-      padding: 4px 10px;
-      font-size: 13px;
-      font-weight: 700;
-      white-space: nowrap;
-      color: #475569;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.15s ease;
-    }
-
-    .tree.show-hints .slot-label {
-      opacity: 1;
-    }
-
-    .slot .card {
-      width: 100%;
-      min-width: 0;
-      min-height: 72px;
-    }
-
-    .me-slot {
-      background: linear-gradient(180deg, #f2f5fb 0%, #eef2f7 100%);
-      border-style: solid;
-      border-color: #d7dfea;
-    }
-
-    /* 친가 왼쪽 */
-    .slot-pg { top: 70px; left: 80px; }
-    .slot-pgm { top: 70px; left: 280px; }
-
-    /* 외가 오른쪽 */
-    .slot-mg { top: 70px; left: 670px; }
-    .slot-mgm { top: 70px; left: 870px; }
-
-    /* 부모 */
-    .slot-father { top: 270px; left: 180px; }
-    .slot-mother { top: 270px; left: 770px; }
-
-    /* 형제자매 / 나 */
-    .slot-older-sister { top: 500px; left: 70px; }
-    .slot-older-brother { top: 500px; left: 260px; }
-    .slot-me { top: 470px; left: 475px; width: 150px; min-height: 120px; }
-    .slot-younger { top: 500px; left: 790px; }
-
-    /* modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -545,28 +302,245 @@
       line-height: 1.6;
     }
 
-    @media (max-width: 1100px) {
+    @media (max-width: 640px) {
+      .vocab-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card::after {
+      content: attr(data-desc);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 14px);
+      transform: translateX(-50%) translateY(6px);
+      min-width: 190px;
+      max-width: 280px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(17, 24, 39, 0.94);
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      white-space: normal;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 30;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 6px);
+      transform: translateX(-50%) translateY(6px);
+      border-width: 8px;
+      border-style: solid;
+      border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 29;
+    }
+
+    .card:hover::after,
+    .card:hover::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .feedback {
+      margin: 0 0 14px;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-weight: 600;
+    }
+
+    .tree-panel { overflow-x: auto; }
+
+    .tree-wrap {
+      min-width: 1120px;
+      position: relative;
+      padding: 20px 10px 10px;
+    }
+
+    .tree {
+      position: relative;
+      width: 1100px;
+      height: 760px;
+      margin: 0 auto;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      border: 1px solid #edf2f7;
+    }
+
+    .tree svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .tree line {
+      stroke: var(--line);
+      stroke-width: 4;
+      stroke-linecap: round;
+    }
+
+    .tree-note {
+      position: absolute;
+      background: #eef4ff;
+      color: #47618d;
+      border: 1px solid #dbe7ff;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .tree-note::after {
+      content: attr(data-desc);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 14px);
+      transform: translateX(-50%) translateY(6px);
+      min-width: 180px;
+      max-width: 260px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(17, 24, 39, 0.94);
+      color: white;
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 1.5;
+      text-align: left;
+      white-space: normal;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.18);
+      z-index: 40;
+    }
+
+    .tree-note::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 6px);
+      transform: translateX(-50%) translateY(6px);
+      border-width: 8px;
+      border-style: solid;
+      border-color: rgba(17, 24, 39, 0.94) transparent transparent transparent;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+      z-index: 39;
+    }
+
+    .tree-note:hover::after,
+    .tree-note:hover::before {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .note-maternal { top: 24px; right: 150px; }
+    .note-paternal { top: 24px; left: 150px; }
+    .note-parents { top: 230px; left: 50%; transform: translateX(-50%); }
+    .note-siblings { top: 430px; left: 50%; transform: translateX(-50%); }
+
+    .slot {
+      position: absolute;
+      width: 150px;
+      min-height: 92px;
+      border: 2px dashed var(--slot-border);
+      border-radius: 18px;
+      background: var(--slot-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+
+    .slot.over {
+      border-color: var(--accent);
+      background: #eff6ff;
+    }
+
+    .slot.correct {
+      border-color: var(--correct);
+      background: var(--correct-bg);
+    }
+
+    .slot.wrong {
+      border-color: var(--wrong);
+      background: var(--wrong-bg);
+    }
+
+    .slot-label {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #fff;
+      border: 1px solid #dbe4f0;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      color: #475569;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.15s ease;
+    }
+
+    .tree.show-hints .slot-label {
+      opacity: 1;
+    }
+
+    .slot .card {
+      width: 100%;
+      min-width: 0;
+      min-height: 72px;
+    }
+
+    .me-slot {
+      background: linear-gradient(180deg, #f2f5fb 0%, #eef2f7 100%);
+      border-style: solid;
+      border-color: #d7dfea;
+    }
+
+    .slot-mg { top: 70px; left: 670px; }
+    .slot-mgm { top: 70px; left: 870px; }
+    .slot-pg { top: 70px; left: 80px; }
+    .slot-pgm { top: 70px; left: 280px; }
+
+    .slot-mother { top: 270px; left: 770px; }
+    .slot-father { top: 270px; left: 180px; }
+
+    .slot-older-sister { top: 500px; left: 70px; }
+    .slot-older-brother { top: 500px; left: 260px; }
+    .slot-me { top: 470px; left: 475px; width: 150px; min-height: 120px; }
+    .slot-younger { top: 500px; left: 770px; }
+
+    @media (max-width: 980px) {
       .layout {
         grid-template-columns: 1fr;
       }
     }
 
     @media (max-width: 640px) {
-      .page { padding: 12px; }
+      .page { padding: 14px; }
       .header h1 { font-size: 24px; }
-
-      .button-row,
-      .gender-toggle {
-        grid-template-columns: 1fr;
-      }
-
-      .tool-btn {
-        width: 100%;
-      }
-
-      .vocab-grid {
-        grid-template-columns: 1fr;
-      }
+      .tool-btn { width: 100%; }
     }
   </style>
 </head>
@@ -582,7 +556,7 @@
         <div class="panel-header">
           <h2>인물 카드</h2>
           <div class="button-row">
-            <button class="tool-btn primary" id="resetBtn" type="button">초기화</button>
+            <button class="tool-btn primary" id="resetBtn">초기화</button>
             <button class="tool-btn secondary" id="hintToggleBtn" type="button">자리 힌트 보기</button>
             <button class="tool-btn secondary" id="openVocabBtn" type="button">확장어휘 보기</button>
           </div>
@@ -593,92 +567,61 @@
           <button class="gender-btn" id="femaleBtn" type="button">나 = 여자</button>
         </div>
 
-        <p id="helpText">
-          카드를 드래그해서 가계도에 놓아 보세요. 손위 형제자매 호칭은 ‘나’의 성별에 따라 바뀝니다.
-          큰 카테고리는 항상 보이고, 버튼을 누르면 개별 자리 힌트만 표시됩니다.
-        </p>
+        <p id="helpText">카드를 드래그해서 가계도에 놓아 보세요. 손위 형제자매 호칭은 ‘나’의 성별에 따라 바뀝니다. 큰 카테고리는 항상 보이고, 버튼을 누르면 개별 자리 힌트만 표시됩니다. 형제자매 세 칸은 자리 고정 없이 배치할 수 있습니다.</p>
 
         <div class="card-list" id="cardList">
-          <div class="card" data-role="maternal_grandfather">외할아버지</div>
-          <div class="card" data-role="maternal_grandmother">외할머니</div>
-          <div class="card" data-role="paternal_grandfather">친할아버지</div>
-          <div class="card" data-role="paternal_grandmother">친할머니</div>
-          <div class="card" data-role="mother">어머니</div>
-          <div class="card" data-role="father">아버지</div>
-          <div class="card" data-role="older_sister">누나</div>
-          <div class="card" data-role="older_brother">형</div>
-          <div class="card" data-role="me">나</div>
-          <div class="card" data-role="younger">동생</div>
+          <div class="card" data-role="maternal_grandfather" data-label="외할아버지">외할아버지</div>
+          <div class="card" data-role="maternal_grandmother" data-label="외할머니">외할머니</div>
+          <div class="card" data-role="paternal_grandfather" data-label="친할아버지">친할아버지</div>
+          <div class="card" data-role="paternal_grandmother" data-label="친할머니">친할머니</div>
+          <div class="card" data-role="mother" data-label="어머니">어머니</div>
+          <div class="card" data-role="father" data-label="아버지">아버지</div>
+          <div class="card" data-role="older_sister" data-label="누나">누나</div>
+          <div class="card" data-role="older_brother" data-label="형">형</div>
+          <div class="card" data-role="me" data-label="나">나</div>
+          <div class="card" data-role="younger" data-label="동생">동생</div>
         </div>
       </div>
 
       <div class="panel tree-panel">
         <p class="feedback" id="feedback">내 가족 가계도입니다. 카드를 배치해 보세요.</p>
 
-        <div class="tree-fit-area" id="treeFitArea">
-          <div class="tree-viewport" id="treeViewport">
-            <div class="tree-shell" id="treeShell">
-              <div class="tree" id="tree">
-                <div class="tree-note note-paternal" data-desc="친가는 아버지 쪽 가족을 말해요.">친가</div>
-                <div class="tree-note note-maternal" data-desc="외가는 어머니 쪽 가족을 말해요.">외가</div>
-                <div class="tree-note note-parents" data-desc="부모는 아버지와 어머니를 함께 가리키는 말이에요.">부모</div>
-                <div class="tree-note note-siblings" data-desc="형제자매는 형, 누나, 오빠, 언니, 동생 등을 함께 가리키는 말이에요.">형제자매 / 나</div>
+        <div class="tree-wrap">
+          <div class="tree">
+            <div class="tree-note note-maternal" data-desc="외가는 어머니 쪽 가족을 말해요.">외가</div>
+            <div class="tree-note note-paternal" data-desc="친가는 아버지 쪽 가족을 말해요.">친가</div>
+            <div class="tree-note note-parents" data-desc="부모는 아버지와 어머니를 함께 가리키는 말이에요.">부모</div>
+            <div class="tree-note note-siblings" data-desc="형제자매는 형, 누나, 오빠, 언니, 남동생, 여동생을 함께 가리키는 말이에요.">형제자매 / 나</div>
 
-                <svg viewBox="0 0 1100 760" aria-hidden="true">
-                  <!-- 친가 -->
-                  <line x1="155" y1="115" x2="355" y2="115"></line>
-                  <line x1="255" y1="115" x2="255" y2="260"></line>
+            <svg viewBox="0 0 1100 760" aria-hidden="true">
+              <line x1="155" y1="115" x2="355" y2="115"></line>
+              <line x1="255" y1="115" x2="255" y2="260"></line>
 
-                  <!-- 외가 -->
-                  <line x1="745" y1="115" x2="945" y2="115"></line>
-                  <line x1="845" y1="115" x2="845" y2="260"></line>
+              <line x1="745" y1="115" x2="945" y2="115"></line>
+              <line x1="845" y1="115" x2="845" y2="260"></line>
 
-                  <!-- 부모 연결 -->
-                  <line x1="255" y1="315" x2="845" y2="315"></line>
-                  <line x1="550" y1="315" x2="550" y2="450"></line>
+              <line x1="255" y1="315" x2="845" y2="315"></line>
+              <line x1="550" y1="315" x2="550" y2="450"></line>
 
-                  <!-- 형제자매 / 나 -->
-                  <line x1="145" y1="470" x2="865" y2="470"></line>
-                  <line x1="145" y1="470" x2="145" y2="500"></line>
-                  <line x1="335" y1="470" x2="335" y2="500"></line>
-                  <line x1="865" y1="470" x2="865" y2="500"></line>
-                </svg>
+              <line x1="145" y1="470" x2="845" y2="470"></line>
+              <line x1="145" y1="470" x2="145" y2="500"></line>
+              <line x1="335" y1="470" x2="335" y2="500"></line>
+              <line x1="550" y1="470" x2="550" y2="470"></line>
+              <line x1="845" y1="470" x2="845" y2="500"></line>
+            </svg>
 
-                <div class="slot slot-pg" data-role="paternal_grandfather">
-                  <span class="slot-label">친할아버지</span>
-                </div>
-                <div class="slot slot-pgm" data-role="paternal_grandmother">
-                  <span class="slot-label">친할머니</span>
-                </div>
+            <div class="slot slot-mg" data-role="maternal_grandfather"><span class="slot-label">외할아버지</span></div>
+            <div class="slot slot-mgm" data-role="maternal_grandmother"><span class="slot-label">외할머니</span></div>
+            <div class="slot slot-pg" data-role="paternal_grandfather"><span class="slot-label">친할아버지</span></div>
+            <div class="slot slot-pgm" data-role="paternal_grandmother"><span class="slot-label">친할머니</span></div>
 
-                <div class="slot slot-mg" data-role="maternal_grandfather">
-                  <span class="slot-label">외할아버지</span>
-                </div>
-                <div class="slot slot-mgm" data-role="maternal_grandmother">
-                  <span class="slot-label">외할머니</span>
-                </div>
+            <div class="slot slot-mother" data-role="mother"><span class="slot-label">어머니</span></div>
+            <div class="slot slot-father" data-role="father"><span class="slot-label">아버지</span></div>
 
-                <div class="slot slot-father" data-role="father">
-                  <span class="slot-label">아버지</span>
-                </div>
-                <div class="slot slot-mother" data-role="mother">
-                  <span class="slot-label">어머니</span>
-                </div>
-
-                <div class="slot slot-older-sister" data-role="older_sister">
-                  <span class="slot-label" data-slot-label="older_sister">누나</span>
-                </div>
-                <div class="slot slot-older-brother" data-role="older_brother">
-                  <span class="slot-label" data-slot-label="older_brother">형</span>
-                </div>
-                <div class="slot slot-me me-slot" data-role="me">
-                  <span class="slot-label" data-slot-label="me">나</span>
-                </div>
-                <div class="slot slot-younger" data-role="younger">
-                  <span class="slot-label">동생</span>
-                </div>
-              </div>
-            </div>
+            <div class="slot slot-older-sister" data-role="sibling_group"><span class="slot-label">형제자매</span></div>
+            <div class="slot slot-older-brother" data-role="sibling_group"><span class="slot-label">형제자매</span></div>
+            <div class="slot slot-me me-slot" data-role="me"><span class="slot-label" data-slot-label="me">나</span></div>
+            <div class="slot slot-younger" data-role="sibling_group"><span class="slot-label">형제자매</span></div>
           </div>
         </div>
       </div>
@@ -690,12 +633,7 @@
           <h3 id="vocabModalTitle">혈연 친척 확장어휘</h3>
           <button class="close-btn" id="closeVocabBtn" type="button">닫기</button>
         </div>
-
-        <p class="modal-desc">
-          내 가족 가계도 다음 단계에서 함께 익히는 친척 어휘입니다.
-          친가와 외가를 나누고, 공통 어휘는 따로 묶어 보았습니다.
-        </p>
-
+        <p class="modal-desc">내 가족 가계도 다음 단계에서 함께 익히는 친척 어휘입니다. 친가와 외가를 나누고, 공통 어휘는 따로 묶어 보았습니다.</p>
         <div class="vocab-sections">
           <section class="vocab-section">
             <h4 class="vocab-section-title">친가</h4>
@@ -744,10 +682,6 @@
   </div>
 
   <script>
-    const DESIGN_WIDTH = 1100;
-    const DESIGN_HEIGHT = 760;
-    const FIT_THRESHOLD = 860;
-
     const cardList = document.getElementById('cardList');
     const resetBtn = document.getElementById('resetBtn');
     const hintToggleBtn = document.getElementById('hintToggleBtn');
@@ -757,10 +691,7 @@
     const feedback = document.getElementById('feedback');
     const maleBtn = document.getElementById('maleBtn');
     const femaleBtn = document.getElementById('femaleBtn');
-    const tree = document.getElementById('tree');
-    const treeFitArea = document.getElementById('treeFitArea');
-    const treeViewport = document.getElementById('treeViewport');
-    const treeShell = document.getElementById('treeShell');
+    const tree = document.querySelector('.tree');
 
     let myGender = 'male';
     let hintsVisible = false;
@@ -810,7 +741,13 @@
 
     function applyCardMeta(card, label, desc) {
       card.textContent = label;
+      card.dataset.label = label;
       card.dataset.desc = desc;
+    }
+
+    function updateHintState() {
+      tree.classList.toggle('show-hints', hintsVisible);
+      hintToggleBtn.textContent = hintsVisible ? '자리 힌트 숨기기' : '자리 힌트 보기';
     }
 
     function updateLabelsByGender() {
@@ -841,19 +778,12 @@
       applyCardMeta(olderBrotherCard, config.older_brother.label, config.older_brother.desc);
       applyCardMeta(meCard, config.me.label, config.me.desc);
 
-      document.querySelector('[data-slot-label="older_sister"]').textContent = config.older_sister.label;
-      document.querySelector('[data-slot-label="older_brother"]').textContent = config.older_brother.label;
       document.querySelector('[data-slot-label="me"]').textContent = '나';
 
       maleBtn.classList.toggle('active', myGender === 'male');
       femaleBtn.classList.toggle('active', myGender === 'female');
 
       checkAnswers();
-    }
-
-    function updateHintState() {
-      tree.classList.toggle('show-hints', hintsVisible);
-      hintToggleBtn.textContent = hintsVisible ? '자리 힌트 숨기기' : '자리 힌트 보기';
     }
 
     function clearStates() {
@@ -878,10 +808,17 @@
       getSlots().forEach((slot) => {
         const card = slot.querySelector('.card');
         if (!card) return;
-
         placedCount += 1;
 
-        if (card.dataset.role === slot.dataset.role) {
+        const slotRole = slot.dataset.role;
+        const cardRole = card.dataset.role;
+        const isSibling = slotRole === 'sibling_group' && (
+          cardRole === 'older_sister' ||
+          cardRole === 'older_brother' ||
+          cardRole === 'younger'
+        );
+
+        if (cardRole === slotRole || isSibling) {
           slot.classList.add('correct');
           correctCount += 1;
         } else {
@@ -921,7 +858,6 @@
     function highlightTarget(target) {
       clearStates();
       if (!target) return;
-
       if (target.classList.contains('slot')) {
         target.classList.add('over');
       } else if (target.classList.contains('card-list')) {
@@ -931,10 +867,8 @@
 
     function moveGhost(clientX, clientY) {
       if (!dragState) return;
-
       dragState.ghost.style.left = `${clientX}px`;
       dragState.ghost.style.top = `${clientY}px`;
-
       const target = findDropTarget(clientX, clientY);
       dragState.currentTarget = target;
       highlightTarget(target);
@@ -1013,62 +947,27 @@
       });
     }
 
-    function fitTreeToDesktop() {
-      const available = treeFitArea.clientWidth;
-      let scale = 1;
-      let viewportWidth = DESIGN_WIDTH;
-      let viewportHeight = DESIGN_HEIGHT;
-
-      if (available >= DESIGN_WIDTH) {
-        scale = 1;
-        viewportWidth = DESIGN_WIDTH;
-        viewportHeight = DESIGN_HEIGHT;
-      } else if (available >= FIT_THRESHOLD) {
-        scale = available / DESIGN_WIDTH;
-        viewportWidth = available;
-        viewportHeight = DESIGN_HEIGHT * scale;
-      } else {
-        scale = 1;
-        viewportWidth = DESIGN_WIDTH;
-        viewportHeight = DESIGN_HEIGHT;
-      }
-
-      treeViewport.style.width = `${viewportWidth}px`;
-      treeViewport.style.height = `${viewportHeight}px`;
-      treeShell.style.transform = `scale(${scale})`;
-    }
-
-    function openVocabModal() {
-      vocabModal.classList.add('open');
-      vocabModal.setAttribute('aria-hidden', 'false');
-    }
-
-    function closeVocabModal() {
-      vocabModal.classList.remove('open');
-      vocabModal.setAttribute('aria-hidden', 'true');
-    }
-
     getCards().forEach(enableCardDrag);
-
     resetBtn.addEventListener('click', resetAllCards);
-
     hintToggleBtn.addEventListener('click', () => {
       hintsVisible = !hintsVisible;
       updateHintState();
     });
 
-    openVocabBtn.addEventListener('click', openVocabModal);
-    closeVocabBtn.addEventListener('click', closeVocabModal);
+    openVocabBtn.addEventListener('click', () => {
+      vocabModal.classList.add('open');
+      vocabModal.setAttribute('aria-hidden', 'false');
+    });
+
+    closeVocabBtn.addEventListener('click', () => {
+      vocabModal.classList.remove('open');
+      vocabModal.setAttribute('aria-hidden', 'true');
+    });
 
     vocabModal.addEventListener('click', (event) => {
       if (event.target === vocabModal) {
-        closeVocabModal();
-      }
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') {
-        closeVocabModal();
+        vocabModal.classList.remove('open');
+        vocabModal.setAttribute('aria-hidden', 'true');
       }
     });
 
@@ -1082,12 +981,9 @@
       updateLabelsByGender();
     });
 
-    window.addEventListener('resize', fitTreeToDesktop);
-
     updateLabelsByGender();
     updateHintState();
     checkAnswers();
-    fitTreeToDesktop();
   </script>
 </body>
 </html>
