@@ -46,6 +46,33 @@
       margin-bottom: 20px;
     }
 
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: #64748b;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      box-shadow: 0 8px 16px rgba(100, 116, 139, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .back-link:hover {
+      transform: translateY(-1px);
+    }
+
     .header h1 {
       margin: 0 0 8px;
       font-size: 28px;
@@ -541,14 +568,20 @@
       .page { padding: 14px; }
       .header h1 { font-size: 24px; }
       .tool-btn { width: 100%; }
+      .back-link { width: 100%; }
     }
   </style>
 </head>
 <body>
   <div class="page">
     <section class="header">
-      <h1>내 가족 가계도 활동</h1>
-      <p>내 가족을 중심으로 가족 호칭을 배치해 보세요. ‘나’의 성별을 선택하면 손위 형제자매 호칭이 바뀝니다.</p>
+      <div class="header-top">
+        <div>
+          <h1>내 가족 가계도 활동</h1>
+          <p>내 가족을 중심으로 가족 호칭을 배치해 보세요. ‘나’의 성별을 선택하면 손위 형제자매 호칭이 바뀝니다.</p>
+        </div>
+        <a href="./index.html" class="back-link">로비로 돌아가기</a>
+      </div>
     </section>
 
     <section class="layout">
