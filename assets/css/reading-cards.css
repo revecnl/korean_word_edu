@@ -1,0 +1,253 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #f5f6fa;
+  color: #222;
+}
+
+.app {
+  width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.app-header p {
+  margin: 6px 0 0;
+  color: #666;
+  font-size: 16px;
+}
+
+.home-button {
+  border: none;
+  border-radius: 14px;
+  background: #ffffff;
+  padding: 12px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.control-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.07);
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-group label {
+  font-weight: 700;
+}
+
+select {
+  padding: 10px 14px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  font-size: 15px;
+  background: #fff;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.toggle input {
+  width: 18px;
+  height: 18px;
+}
+
+.card-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.word-card {
+  width: min(640px, 100%);
+  min-height: 540px;
+  background: #ffffff;
+  border-radius: 32px;
+  padding: 28px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-top {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.category-badge,
+.batchim-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.category-badge {
+  background: #eef3ff;
+  color: #3158b7;
+}
+
+.batchim-badge {
+  background: #f2f2f2;
+  color: #555;
+}
+
+.batchim-badge.has-batchim {
+  background: #fff2e8;
+  color: #b65300;
+}
+
+.word-text {
+  margin: 22px 0 12px;
+  font-size: clamp(72px, 12vw, 140px);
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+}
+
+.image-wrap {
+  width: min(360px, 90%);
+  height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.image-fallback {
+  width: 100%;
+  height: 100%;
+  border: 3px dashed #ddd;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  font-weight: 700;
+  font-size: 22px;
+}
+
+.hidden {
+  display: none;
+}
+
+.meaning-text {
+  min-height: 32px;
+  margin: 10px 0 0;
+  font-size: 24px;
+  color: #555;
+  font-weight: 700;
+}
+
+.counter {
+  margin-top: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #555;
+}
+
+.button-panel {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.button-panel button {
+  border: none;
+  border-radius: 18px;
+  padding: 18px 12px;
+  font-size: 20px;
+  font-weight: 800;
+  background: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.button-panel button.primary {
+  background: #222;
+  color: #ffffff;
+}
+
+.button-panel button:active,
+.home-button:active {
+  transform: translateY(1px);
+}
+
+@media (max-width: 640px) {
+  .app {
+    padding: 16px;
+  }
+
+  .app-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .app-header h1 {
+    font-size: 26px;
+  }
+
+  .word-card {
+    min-height: 460px;
+    padding: 22px;
+  }
+
+  .image-wrap {
+    height: 210px;
+  }
+
+  .button-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .button-panel button {
+    font-size: 18px;
+  }
+}
