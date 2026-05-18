@@ -19,6 +19,18 @@ const programCards = [
     buttonText: "프로그램 실행",
     href: "./family-tree.html"
   },
+
+  {
+  id: "reading-cards",
+  title: "한글 단어 읽기 카드",
+  description:
+    "자음과 모음을 배운 뒤, 받침 없는 단어를 보고 읽는 연습 프로그램입니다.",
+  tags: ["한글", "단어 읽기", "받침 없는 단어"],
+  status: "live",
+  buttonText: "프로그램 실행",
+  href: "./reading-cards.html"
+},
+  
   {
     id: "family-intro",
     title: "가족 소개 표 활동",
