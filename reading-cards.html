@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>한글 단어 읽기 카드</title>
+
+  <link rel="stylesheet" href="./assets/css/reading-cards.css" />
+  <script defer src="./assets/js/reading-cards-data.js"></script>
+  <script defer src="./assets/js/reading-cards.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <button class="home-button" onclick="location.href='./index.html'">
+        ← 로비로
+      </button>
+
+      <div>
+        <h1>한글 단어 읽기 카드</h1>
+        <p>글자를 보고 소리 내어 읽어 보세요.</p>
+      </div>
+    </header>
+
+    <section class="control-panel">
+      <div class="control-group">
+        <label for="categorySelect">테마</label>
+        <select id="categorySelect">
+          <option value="all">전체</option>
+          <option value="animals">동식물</option>
+          <option value="food">음식</option>
+          <option value="objects">물건</option>
+          <option value="people">사람 / 직업</option>
+        </select>
+      </div>
+
+      <label class="toggle">
+        <input type="checkbox" id="includeBatchimToggle" />
+        <span>받침 단어 포함</span>
+      </label>
+
+      <label class="toggle">
+        <input type="checkbox" id="showMeaningToggle" checked />
+        <span>영어 뜻 보기</span>
+      </label>
+    </section>
+
+    <section class="card-area">
+      <article class="word-card">
+        <div class="card-top">
+          <span id="categoryBadge" class="category-badge">음식</span>
+          <span id="batchimBadge" class="batchim-badge">받침 없음</span>
+        </div>
+
+        <h2 id="wordText" class="word-text">고기</h2>
+
+        <div class="image-wrap">
+          <img id="wordImage" src="" alt="" />
+          <div id="imageFallback" class="image-fallback hidden">
+            이미지 준비 중
+          </div>
+        </div>
+
+        <p id="meaningText" class="meaning-text">meat</p>
+      </article>
+
+      <div class="counter">
+        <span id="cardCounter">1 / 20</span>
+      </div>
+    </section>
+
+    <section class="button-panel">
+      <button id="prevBtn">이전</button>
+      <button id="nextBtn" class="primary">다음</button>
+      <button id="randomBtn">랜덤</button>
+      <button id="shuffleBtn">섞기</button>
+    </section>
+  </main>
+</body>
+</html>
