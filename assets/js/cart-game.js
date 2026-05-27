@@ -40,7 +40,7 @@ const products = [
     id: "wallet",
     name: "지갑",
     image: "wallet.png"
-  }
+  },
     {
     id: "orange",
     name: "오렌지",
