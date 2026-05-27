@@ -129,26 +129,34 @@ const npcs = [
 
 let cart = [];
 let currentNpc = null;
+let currentLevel = getSavedLevel();
 
-const savedLevel = Number(localStorage.getItem("cartGameLevel"));
-let currentLevel = [1, 2, 3].includes(savedLevel) ? savedLevel : 1;
+let productGrid = null;
+let cartList = null;
+let cartStatus = null;
+let answerPreview = null;
+let clearCartButton = null;
+let levelButtons = [];
 
-const productGrid = document.getElementById("productGrid");
-const cartList = document.getElementById("cartList");
-const cartStatus = document.getElementById("cartStatus");
-const answerPreview = document.getElementById("answerPreview");
-const clearCartButton = document.getElementById("clearCartButton");
-const levelButtons = document.querySelectorAll(".level-button");
+let npcImage = null;
+let npcName = null;
+let npcRole = null;
+let npcDialogue = null;
 
-const npcImage = document.getElementById("npcImage");
-const npcName = document.getElementById("npcName");
-const npcRole = document.getElementById("npcRole");
-const npcDialogue = document.getElementById("npcDialogue");
+let speechQuestion = null;
+let cartTotalBox = null;
+let cartTotalNumber = null;
+let cartTotalKorean = null;
 
-const speechQuestion = document.getElementById("speechQuestion");
-const cartTotalBox = document.getElementById("cartTotalBox");
-const cartTotalNumber = document.getElementById("cartTotalNumber");
-const cartTotalKorean = document.getElementById("cartTotalKorean");
+function getSavedLevel() {
+  const savedLevel = Number(localStorage.getItem("cartGameLevel"));
+
+  if ([1, 2, 3].includes(savedLevel)) {
+    return savedLevel;
+  }
+
+  return 1;
+}
 
 function makeImagePath(fileName) {
   return `${IMAGE_BASE_PATH}${fileName}`;
@@ -242,27 +250,89 @@ function makePlaceholderImage(name) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+function hasFinalConsonant(word) {
+  const lastChar = word[word.length - 1];
+  const code = lastChar.charCodeAt(0);
+
+  if (code < 0xac00 || code > 0xd7a3) {
+    return false;
+  }
+
+  return (code - 0xac00) % 28 !== 0;
+}
+
+function getObjectParticle(word) {
+  return hasFinalConsonant(word) ? "을" : "를";
+}
+
+function getNativeNumber(count) {
+  const nativeNumbers = {
+    1: "한",
+    2: "두",
+    3: "세",
+    4: "네",
+    5: "다섯",
+    6: "여섯",
+    7: "일곱",
+    8: "여덟",
+    9: "아홉",
+    10: "열"
+  };
+
+  return nativeNumbers[count] || String(count);
+}
+
+function getCountPhrase(count) {
+  const countText = getNativeNumber(count);
+
+  if (count <= 10) {
+    return `${countText} 개`;
+  }
+
+  return `${countText}개`;
+}
+
+function getTotalPrice() {
+  return cart.reduce((sum, item) => {
+    return sum + item.price * item.count;
+  }, 0);
+}
+
+function cacheDomElements() {
+  productGrid = document.getElementById("productGrid");
+  cartList = document.getElementById("cartList");
+  cartStatus = document.getElementById("cartStatus");
+  answerPreview = document.getElementById("answerPreview");
+  clearCartButton = document.getElementById("clearCartButton");
+  levelButtons = Array.from(document.querySelectorAll(".level-button"));
+
+  npcImage = document.getElementById("npcImage");
+  npcName = document.getElementById("npcName");
+  npcRole = document.getElementById("npcRole");
+  npcDialogue = document.getElementById("npcDialogue");
+
+  speechQuestion = document.getElementById("speechQuestion");
+  cartTotalBox = document.getElementById("cartTotalBox");
+  cartTotalNumber = document.getElementById("cartTotalNumber");
+  cartTotalKorean = document.getElementById("cartTotalKorean");
+}
+
 function setLevelVisualState() {
   document.body.setAttribute("data-cart-level", String(currentLevel));
 
   levelButtons.forEach((button) => {
-    button.classList.toggle(
-      "active",
-      Number(button.dataset.level) === currentLevel
-    );
+    const buttonLevel = Number(button.dataset.level);
+    button.classList.toggle("active", buttonLevel === currentLevel);
   });
 
   if (speechQuestion) {
-    if (currentLevel === 3) {
-      speechQuestion.textContent = "무엇을 사요? 모두 얼마예요?";
-    } else {
-      speechQuestion.textContent = "무엇을 사요?";
-    }
+    speechQuestion.textContent =
+      currentLevel === 3 ? "무엇을 사요? 모두 얼마예요?" : "무엇을 사요?";
   }
 }
 
 function setupLevelButtons() {
-  if (!levelButtons || levelButtons.length === 0) {
+  if (levelButtons.length === 0) {
     return;
   }
 
@@ -270,7 +340,13 @@ function setupLevelButtons() {
 
   levelButtons.forEach((button) => {
     button.addEventListener("click", () => {
-      currentLevel = Number(button.dataset.level);
+      const selectedLevel = Number(button.dataset.level);
+
+      if (![1, 2, 3].includes(selectedLevel)) {
+        return;
+      }
+
+      currentLevel = selectedLevel;
       localStorage.setItem("cartGameLevel", String(currentLevel));
 
       setLevelVisualState();
@@ -315,11 +391,8 @@ function updateNpcDialogue(type) {
   }
 
   if (type === "cart") {
-    if (currentLevel === 3) {
-      npcDialogue.textContent = `${getRandomItem(currentNpc.priceMessages)} “${makeAnswerSentence()}”`;
-    } else {
-      npcDialogue.textContent = `${getRandomItem(currentNpc.cartMessages)} “${makeAnswerSentence()}”`;
-    }
+    const messages = currentLevel === 3 ? currentNpc.priceMessages : currentNpc.cartMessages;
+    npcDialogue.textContent = `${getRandomItem(messages)} “${makeAnswerSentence()}”`;
     return;
   }
 
@@ -447,7 +520,14 @@ function renderCart() {
         alt="${item.name}"
       />
 
-      <p class="cart-item-name">${item.name}</p>
+      <div>
+        <p class="cart-item-name">${item.name}</p>
+        ${
+          currentLevel === 3
+            ? `<p class="cart-item-price">${formatPrice(item.price)} × ${item.count}</p>`
+            : ""
+        }
+      </div>
 
       <span class="cart-item-count">x ${item.count}</span>
     `;
@@ -483,44 +563,6 @@ function updateCartTotal() {
   cartTotalKorean.textContent = priceToKorean(totalPrice);
 }
 
-function getTotalPrice() {
-  return cart.reduce((sum, item) => {
-    return sum + item.price * item.count;
-  }, 0);
-}
-
-function hasFinalConsonant(word) {
-  const lastChar = word[word.length - 1];
-  const code = lastChar.charCodeAt(0);
-
-  if (code < 0xac00 || code > 0xd7a3) {
-    return false;
-  }
-
-  return (code - 0xac00) % 28 !== 0;
-}
-
-function getObjectParticle(word) {
-  return hasFinalConsonant(word) ? "을" : "를";
-}
-
-function getNativeNumber(count) {
-  const nativeNumbers = {
-    1: "한",
-    2: "두",
-    3: "세",
-    4: "네",
-    5: "다섯",
-    6: "여섯",
-    7: "일곱",
-    8: "여덟",
-    9: "아홉",
-    10: "열"
-  };
-
-  return nativeNumbers[count] || String(count);
-}
-
 function makeLevelOneSentence() {
   if (cart.length === 1) {
     const item = cart[0];
@@ -537,24 +579,6 @@ function makeLevelOneSentence() {
 function makeLevelTwoSentence() {
   if (cart.length === 1) {
     const item = cart[0];
-
-    return `${item.name} ${getCountPhrase(item.count)}를 사요.`;
-  }
-
-function getCountPhrase(count) {
-  const countText = getNativeNumber(count);
-
-  if (count <= 10) {
-    return `${countText} 개`;
-  }
-
-  return `${countText}개`;
-}
-
-function makeLevelTwoSentence() {
-  if (cart.length === 1) {
-    const item = cart[0];
-
     return `${item.name} ${getCountPhrase(item.count)}를 사요.`;
   }
 
@@ -598,11 +622,20 @@ function makeAnswerSentence() {
   return makeLevelOneSentence();
 }
 
-if (clearCartButton) {
-  clearCartButton.addEventListener("click", clearCart);
+function setupEvents() {
+  if (clearCartButton) {
+    clearCartButton.addEventListener("click", clearCart);
+  }
 }
 
-setupLevelButtons();
-renderRandomNpc();
-renderProducts();
-renderCart();
+function initCartGame() {
+  cacheDomElements();
+  setupEvents();
+  setupLevelButtons();
+  renderRandomNpc();
+  renderProducts();
+  renderCart();
+  setLevelVisualState();
+}
+
+document.addEventListener("DOMContentLoaded", initCartGame);
