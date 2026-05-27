@@ -5,43 +5,51 @@ const products = [
   {
     id: "apple",
     name: "사과",
-    image: "apple.png"
+    image: "apple.png",
+    price: 1000
   },
   {
     id: "bread",
     name: "빵",
-    image: "bread.png"
+    image: "bread.png",
+    price: 1250
   },
   {
     id: "milk",
     name: "우유",
-    image: "milk.png"
+    image: "milk.png",
+    price: 720
   },
   {
     id: "water",
     name: "물",
-    image: "water.png"
+    image: "water.png",
+    price: 550
   },
   {
     id: "book",
     name: "책",
-    image: "book.png"
+    image: "book.png",
+    price: 800
   },
   {
     id: "bag",
     name: "가방",
-    image: "bag.png"
+    image: "bag.png",
+    price: 15000
   },
   {
     id: "pen",
     name: "펜",
-    image: "pen.png"
+    image: "pen.png",
+    price: 740
   },
   {
     id: "wallet",
     name: "지갑",
-    image: "wallet.png"
-  },
+    image: "wallet.png",
+    price: 12300
+  }
 ];
 
 const npcs = [
@@ -65,6 +73,11 @@ const npcs = [
       "잘했어요. 문장으로 말해 보세요.",
       "장바구니에 담았어요. 같이 읽어 볼까요?"
     ],
+    priceMessages: [
+      "좋아요! 이제 가격도 같이 말해 볼까요?",
+      "총 가격을 확인해 보세요.",
+      "물건과 가격을 같이 말해 봅시다."
+    ],
     clearMessages: [
       "장바구니를 비웠어요. 다시 골라 볼까요?",
       "초기화했어요. 새로 담아 보세요.",
@@ -72,7 +85,8 @@ const npcs = [
     ],
     levelMessages: {
       1: "레벨 1이에요. 물건 이름을 넣어 말해 보세요.",
-      2: "레벨 2예요. 한 개, 두 개, 세 개를 같이 연습해요."
+      2: "레벨 2예요. 한 개, 두 개, 세 개를 같이 연습해요.",
+      3: "레벨 3이에요. 물건의 가격과 총 가격을 같이 말해 보세요."
     }
   },
   {
@@ -95,6 +109,11 @@ const npcs = [
       "아주 좋아요. 무엇을 사요?",
       "장바구니에 담았어요. 문장으로 연습해 볼까요?"
     ],
+    priceMessages: [
+      "좋아요! 모두 얼마예요?",
+      "가격도 같이 확인해 볼까요?",
+      "총 가격을 한국어로 읽어 봅시다."
+    ],
     clearMessages: [
       "장바구니를 비웠어요. 다시 시작해요!",
       "좋아요. 다시 물건을 골라 보세요.",
@@ -102,14 +121,17 @@ const npcs = [
     ],
     levelMessages: {
       1: "레벨 1이에요. ‘사과를 사요’처럼 말해 보세요.",
-      2: "레벨 2예요. ‘사과 한 개를 사요’처럼 말해 보세요."
+      2: "레벨 2예요. ‘사과 한 개를 사요’처럼 말해 보세요.",
+      3: "레벨 3이에요. ‘모두 얼마예요?’를 같이 연습해요."
     }
   }
 ];
 
 let cart = [];
 let currentNpc = null;
-let currentLevel = Number(localStorage.getItem("cartGameLevel")) || 1;
+
+const savedLevel = Number(localStorage.getItem("cartGameLevel"));
+let currentLevel = [1, 2, 3].includes(savedLevel) ? savedLevel : 1;
 
 const productGrid = document.getElementById("productGrid");
 const cartList = document.getElementById("cartList");
@@ -123,6 +145,11 @@ const npcName = document.getElementById("npcName");
 const npcRole = document.getElementById("npcRole");
 const npcDialogue = document.getElementById("npcDialogue");
 
+const speechQuestion = document.getElementById("speechQuestion");
+const cartTotalBox = document.getElementById("cartTotalBox");
+const cartTotalNumber = document.getElementById("cartTotalNumber");
+const cartTotalKorean = document.getElementById("cartTotalKorean");
+
 function makeImagePath(fileName) {
   return `${IMAGE_BASE_PATH}${fileName}`;
 }
@@ -133,6 +160,71 @@ function makeCharacterPath(fileName) {
 
 function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
+}
+
+function formatPrice(price) {
+  return `${price.toLocaleString("ko-KR")}원`;
+}
+
+function convertUnderTenThousandToKorean(number) {
+  const koreanNumbers = ["", "일", "이", "삼", "사", "오", "육", "칠", "팔", "구"];
+  const units = ["", "십", "백", "천"];
+
+  let result = "";
+  let remaining = number;
+
+  for (let i = 3; i >= 0; i -= 1) {
+    const unitValue = 10 ** i;
+    const digit = Math.floor(remaining / unitValue);
+
+    if (digit > 0) {
+      const unit = units[i];
+
+      if (digit === 1 && unit !== "") {
+        result += unit;
+      } else {
+        result += `${koreanNumbers[digit]}${unit}`;
+      }
+
+      remaining %= unitValue;
+    }
+  }
+
+  return result;
+}
+
+function numberToKorean(number) {
+  if (number === 0) {
+    return "영";
+  }
+
+  const bigUnits = ["", "만", "억"];
+  let result = "";
+  let remaining = number;
+  let unitIndex = 0;
+
+  while (remaining > 0) {
+    const chunk = remaining % 10000;
+
+    if (chunk > 0) {
+      let chunkText = convertUnderTenThousandToKorean(chunk);
+
+      if (chunk === 1 && unitIndex > 0) {
+        chunkText = "";
+      }
+
+      result = `${chunkText}${bigUnits[unitIndex]}${result}`;
+    }
+
+    remaining = Math.floor(remaining / 10000);
+    unitIndex += 1;
+  }
+
+  return result;
+}
+
+function priceToKorean(price) {
+  return `${numberToKorean(price)} 원`;
 }
 
 function makePlaceholderImage(name) {
@@ -148,6 +240,50 @@ function makePlaceholderImage(name) {
   `;
 
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
+}
+
+function setLevelVisualState() {
+  document.body.setAttribute("data-cart-level", String(currentLevel));
+
+  levelButtons.forEach((button) => {
+    button.classList.toggle(
+      "active",
+      Number(button.dataset.level) === currentLevel
+    );
+  });
+
+  if (speechQuestion) {
+    if (currentLevel === 3) {
+      speechQuestion.textContent = "무엇을 사요? 모두 얼마예요?";
+    } else {
+      speechQuestion.textContent = "무엇을 사요?";
+    }
+  }
+}
+
+function setupLevelButtons() {
+  if (!levelButtons || levelButtons.length === 0) {
+    return;
+  }
+
+  setLevelVisualState();
+
+  levelButtons.forEach((button) => {
+    button.addEventListener("click", () => {
+      currentLevel = Number(button.dataset.level);
+      localStorage.setItem("cartGameLevel", String(currentLevel));
+
+      setLevelVisualState();
+      renderProducts();
+      renderCart();
+
+      if (cart.length > 0) {
+        updateNpcDialogue("cart");
+      } else {
+        updateNpcDialogue("level");
+      }
+    });
+  });
 }
 
 function renderRandomNpc() {
@@ -179,7 +315,11 @@ function updateNpcDialogue(type) {
   }
 
   if (type === "cart") {
-    npcDialogue.textContent = `${getRandomItem(currentNpc.cartMessages)} “${makeAnswerSentence()}”`;
+    if (currentLevel === 3) {
+      npcDialogue.textContent = `${getRandomItem(currentNpc.priceMessages)} “${makeAnswerSentence()}”`;
+    } else {
+      npcDialogue.textContent = `${getRandomItem(currentNpc.cartMessages)} “${makeAnswerSentence()}”`;
+    }
     return;
   }
 
@@ -193,38 +333,6 @@ function updateNpcDialogue(type) {
       currentNpc.levelMessages[currentLevel] ||
       "레벨을 바꿨어요. 다시 연습해 볼까요?";
   }
-}
-
-function setupLevelButtons() {
-  if (!levelButtons || levelButtons.length === 0) {
-    return;
-  }
-
-  levelButtons.forEach((button) => {
-    const buttonLevel = Number(button.dataset.level);
-
-    button.classList.toggle("active", buttonLevel === currentLevel);
-
-    button.addEventListener("click", () => {
-      currentLevel = buttonLevel;
-      localStorage.setItem("cartGameLevel", String(currentLevel));
-
-      levelButtons.forEach((item) => {
-        item.classList.toggle(
-          "active",
-          Number(item.dataset.level) === currentLevel
-        );
-      });
-
-      renderCart();
-
-      if (cart.length > 0) {
-        updateNpcDialogue("cart");
-      } else {
-        updateNpcDialogue("level");
-      }
-    });
-  });
 }
 
 function renderProducts() {
@@ -257,6 +365,11 @@ function renderProducts() {
         >
           +
         </button>
+      </div>
+
+      <div class="product-price">
+        <p class="product-price-number">${formatPrice(product.price)}</p>
+        <p class="product-price-korean">${priceToKorean(product.price)}</p>
       </div>
     `;
 
@@ -314,6 +427,7 @@ function renderCart() {
     cartList.innerHTML = `<p class="empty-message">상품을 담아 보세요.</p>`;
     cartStatus.textContent = "아직 담은 물건이 없어요.";
     answerPreview.textContent = "아직 없어요.";
+    updateCartTotal();
     return;
   }
 
@@ -347,6 +461,32 @@ function renderCart() {
   });
 
   answerPreview.textContent = makeAnswerSentence();
+  updateCartTotal();
+}
+
+function updateCartTotal() {
+  if (!cartTotalBox || !cartTotalNumber || !cartTotalKorean) {
+    return;
+  }
+
+  const totalPrice = getTotalPrice();
+
+  if (currentLevel !== 3 || cart.length === 0) {
+    cartTotalBox.classList.add("hidden");
+    cartTotalNumber.textContent = "0원";
+    cartTotalKorean.textContent = "영 원";
+    return;
+  }
+
+  cartTotalBox.classList.remove("hidden");
+  cartTotalNumber.textContent = formatPrice(totalPrice);
+  cartTotalKorean.textContent = priceToKorean(totalPrice);
+}
+
+function getTotalPrice() {
+  return cart.reduce((sum, item) => {
+    return sum + item.price * item.count;
+  }, 0);
 }
 
 function hasFinalConsonant(word) {
@@ -416,6 +556,13 @@ function makeLevelTwoSentence() {
   return `${phrases.join(", ")} 사요.`;
 }
 
+function makeLevelThreeSentence() {
+  const totalPrice = getTotalPrice();
+  const shoppingSentence = makeLevelTwoSentence();
+
+  return `${shoppingSentence} 모두 ${formatPrice(totalPrice)}이에요. (${priceToKorean(totalPrice)}이에요.)`;
+}
+
 function makeAnswerSentence() {
   if (cart.length === 0) {
     return "아직 없어요.";
@@ -427,6 +574,10 @@ function makeAnswerSentence() {
 
   if (currentLevel === 2) {
     return makeLevelTwoSentence();
+  }
+
+  if (currentLevel === 3) {
+    return makeLevelThreeSentence();
   }
 
   return makeLevelOneSentence();
