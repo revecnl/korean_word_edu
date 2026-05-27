@@ -1,4 +1,5 @@
 const IMAGE_BASE_PATH = "./assets/pic/object/";
+const CHARACTER_BASE_PATH = "./assets/pic/character/";
 
 const products = [
   {
@@ -40,10 +41,66 @@ const products = [
     id: "wallet",
     name: "지갑",
     image: "wallet.png"
+  }
+];
+
+const npcs = [
+  {
+    id: "clerk-male",
+    name: "이준호",
+    role: "친절한 점원",
+    image: "clerk-male.png",
+    greetings: [
+      "어서 오세요! 필요한 물건을 골라 보세요.",
+      "오늘은 무엇을 사요?",
+      "장바구니에 물건을 담아 보세요!"
+    ],
+    emptyMessages: [
+      "아직 장바구니가 비어 있어요. 물건을 하나 골라 볼까요?",
+      "상품의 + 버튼을 눌러 보세요.",
+      "필요한 물건을 장바구니에 담아 주세요."
+    ],
+    cartMessages: [
+      "좋아요! 이렇게 말해 볼까요?",
+      "잘했어요. 문장으로 말해 보세요.",
+      "장바구니에 담았어요. 같이 읽어 볼까요?"
+    ],
+    clearMessages: [
+      "장바구니를 비웠어요. 다시 골라 볼까요?",
+      "초기화했어요. 새로 담아 보세요.",
+      "좋아요. 다시 쇼핑을 시작해 볼까요?"
+    ]
   },
+  {
+    id: "clerk-female",
+    name: "김수연",
+    role: "상냥한 점원",
+    image: "clerk-female.png",
+    greetings: [
+      "안녕하세요! 천천히 둘러보세요.",
+      "무엇을 사요? 필요한 물건을 골라 보세요.",
+      "어서 오세요! 장바구니에 물건을 담아 보세요."
+    ],
+    emptyMessages: [
+      "아직 담은 물건이 없어요. 하나 골라 볼까요?",
+      "왼쪽 상품에서 + 버튼을 눌러 주세요.",
+      "먼저 사고 싶은 물건을 선택해 보세요."
+    ],
+    cartMessages: [
+      "좋아요! 이 문장을 말해 보세요.",
+      "아주 좋아요. 무엇을 사요?",
+      "장바구니에 담았어요. 문장으로 연습해 볼까요?"
+    ],
+    clearMessages: [
+      "장바구니를 비웠어요. 다시 시작해요!",
+      "좋아요. 다시 물건을 골라 보세요.",
+      "초기화했어요. 이번에는 무엇을 살까요?"
+    ]
+  }
 ];
 
 let cart = [];
+let currentNpc = null;
 
 const productGrid = document.getElementById("productGrid");
 const cartList = document.getElementById("cartList");
@@ -51,8 +108,49 @@ const cartStatus = document.getElementById("cartStatus");
 const answerPreview = document.getElementById("answerPreview");
 const clearCartButton = document.getElementById("clearCartButton");
 
+const npcImage = document.getElementById("npcImage");
+const npcName = document.getElementById("npcName");
+const npcRole = document.getElementById("npcRole");
+const npcDialogue = document.getElementById("npcDialogue");
+
 function makeImagePath(fileName) {
   return `${IMAGE_BASE_PATH}${fileName}`;
+}
+
+function makeCharacterPath(fileName) {
+  return `${CHARACTER_BASE_PATH}${fileName}`;
+}
+
+function getRandomItem(array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+
+function renderRandomNpc() {
+  currentNpc = getRandomItem(npcs);
+
+  npcImage.src = makeCharacterPath(currentNpc.image);
+  npcImage.alt = `${currentNpc.name} 점원`;
+  npcName.textContent = currentNpc.name;
+  npcRole.textContent = currentNpc.role;
+  npcDialogue.textContent = getRandomItem(currentNpc.greetings);
+}
+
+function updateNpcDialogue(type) {
+  if (!currentNpc) return;
+
+  if (type === "empty") {
+    npcDialogue.textContent = getRandomItem(currentNpc.emptyMessages);
+    return;
+  }
+
+  if (type === "cart") {
+    npcDialogue.textContent = `${getRandomItem(currentNpc.cartMessages)} “${makeAnswerSentence()}”`;
+    return;
+  }
+
+  if (type === "clear") {
+    npcDialogue.textContent = getRandomItem(currentNpc.clearMessages);
+  }
 }
 
 function makePlaceholderImage(name) {
@@ -130,11 +228,13 @@ function addToCart(productId) {
   }
 
   renderCart();
+  updateNpcDialogue("cart");
 }
 
 function clearCart() {
   cart = [];
   renderCart();
+  updateNpcDialogue("clear");
 }
 
 function renderCart() {
@@ -180,21 +280,40 @@ function renderCart() {
   answerPreview.textContent = makeAnswerSentence();
 }
 
+function hasFinalConsonant(word) {
+  const lastChar = word[word.length - 1];
+  const code = lastChar.charCodeAt(0);
+
+  if (code < 0xac00 || code > 0xd7a3) {
+    return false;
+  }
+
+  return (code - 0xac00) % 28 !== 0;
+}
+
+function getObjectParticle(word) {
+  return hasFinalConsonant(word) ? "을" : "를";
+}
+
 function makeAnswerSentence() {
   if (cart.length === 0) {
     return "아직 없어요.";
   }
 
-  const itemNames = cart.map((item) => item.name);
-
-  if (itemNames.length === 1) {
-    return `${itemNames[0]} 를/을 사요.`;
+  if (cart.length === 1) {
+    const item = cart[0];
+    return `${item.name}${getObjectParticle(item.name)} 사요.`;
   }
 
-  return `${itemNames.join(", ")} 를/을 사요.`;
+  const phrases = cart.map((item) => {
+    return `${item.name}${getObjectParticle(item.name)}`;
+  });
+
+  return `${phrases.join(", ")} 사요.`;
 }
 
 clearCartButton.addEventListener("click", clearCart);
 
+renderRandomNpc();
 renderProducts();
 renderCart();
