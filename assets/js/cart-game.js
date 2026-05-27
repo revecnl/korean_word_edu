@@ -539,12 +539,12 @@ function makeLevelTwoSentence() {
     const item = cart[0];
     const countText = getNativeNumber(item.count);
 
-    return `${item.name} ${countText} 개를 사요.`;
+    return `${item.name} ${countText}개를 사요.`;
   }
 
   const phrases = cart.map((item, index) => {
     const countText = getNativeNumber(item.count);
-    const phrase = `${item.name} ${countText} 개`;
+    const phrase = `${item.name} ${countText}개`;
 
     if (index === cart.length - 1) {
       return `${phrase}를`;
