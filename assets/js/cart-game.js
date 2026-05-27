@@ -537,18 +537,32 @@ function makeLevelOneSentence() {
 function makeLevelTwoSentence() {
   if (cart.length === 1) {
     const item = cart[0];
-    const countText = getNativeNumber(item.count);
 
-    return `${item.name} ${countText}개를 사요.`;
+    return `${item.name} ${getCountPhrase(item.count)}를 사요.`;
   }
 
+  function getCountPhrase(count) {
+  const countText = getNativeNumber(count);
+
+  if (count <= 10) {
+    return `${countText} 개`;
+  }
+
+  return `${countText}개`;
+}
+
   const phrases = cart.map((item, index) => {
-    const countText = getNativeNumber(item.count);
-    const phrase = `${item.name} ${countText}개`;
+    const phrase = `${item.name} ${getCountPhrase(item.count)}`;
 
     if (index === cart.length - 1) {
       return `${phrase}를`;
     }
+
+    return phrase;
+  });
+
+  return `${phrases.join(", ")} 사요.`;
+}
 
     return phrase;
   });
