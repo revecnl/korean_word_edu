@@ -41,6 +41,11 @@ const products = [
     name: "지갑",
     image: "wallet.png"
   }
+    {
+    id: "orange",
+    name: "오렌지",
+    image: "orenge.png"
+  },
 ];
 
 let cart = [];
@@ -188,10 +193,10 @@ function makeAnswerSentence() {
   const itemNames = cart.map((item) => item.name);
 
   if (itemNames.length === 1) {
-    return `${itemNames[0]}를/을 사요.`;
+    return `${itemNames[0]} 를/을 사요.`;
   }
 
-  return `${itemNames.join(", ")}를/을 사요.`;
+  return `${itemNames.join(", ")} 를/을 사요.`;
 }
 
 clearCartButton.addEventListener("click", clearCart);
