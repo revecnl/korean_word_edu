@@ -41,11 +41,6 @@ const products = [
     name: "지갑",
     image: "wallet.png"
   },
-    {
-    id: "orange",
-    name: "오렌지",
-    image: "orenge.png"
-  },
 ];
 
 let cart = [];
