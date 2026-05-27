@@ -52,6 +52,16 @@ const programCards = [
     href: "./flashcard.html"
   },
   {
+  id: "cart-game",
+  title: "장바구니 게임",
+  description:
+    "온라인 쇼핑 페이지처럼 상품을 장바구니에 담으며 ‘무엇을 사요?’, ‘사과를 사요’ 같은 문장을 연습할 수 있는 활동입니다.",
+  tags: ["장바구니", "물건", "사다", "문장 만들기"],
+  status: "live",
+  buttonText: "프로그램 실행",
+  href: "./cart-game.html"
+},
+  {
     id: "new-program",
     title: "새 활동 프로그램",
     description: "추후 추가될 프로그램 공간입니다.",
