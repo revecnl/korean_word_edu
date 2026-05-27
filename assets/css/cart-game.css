@@ -650,3 +650,69 @@ a {
     padding: 11px 12px;
   }
 }
+
+/* 레벨 3 가격 표시 */
+.product-price {
+  display: none;
+  margin: 0 14px 14px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background: #fff8ed;
+  border: 1px solid var(--line);
+  text-align: center;
+}
+
+body[data-cart-level="3"] .product-price {
+  display: block;
+}
+
+.product-price-number {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 900;
+  color: var(--primary-dark);
+}
+
+.product-price-korean {
+  margin: 4px 0 0;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.cart-total-box {
+  display: none;
+  margin-top: 14px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  background: #fff8ed;
+  border: 1px solid var(--line);
+}
+
+body[data-cart-level="3"] .cart-total-box {
+  display: block;
+}
+
+.cart-total-box.hidden {
+  display: none !important;
+}
+
+.cart-total-label {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font-weight: 900;
+}
+
+.cart-total-number {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: var(--primary-dark);
+}
+
+.cart-total-korean {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-weight: 900;
+  line-height: 1.45;
+}
