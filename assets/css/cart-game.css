@@ -388,19 +388,4 @@ a {
     width: 48px;
     height: 48px;
   }
-
-  .support {
-  padding: 24px 26px;
-}
-
-.support h2 {
-  margin: 0 0 8px;
-  font-size: 24px;
-}
-
-.support p {
-  margin: 0 0 18px;
-  color: var(--muted);
-  line-height: 1.7;
-}
 }
