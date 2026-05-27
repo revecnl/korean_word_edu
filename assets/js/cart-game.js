@@ -41,7 +41,7 @@ const products = [
     id: "wallet",
     name: "지갑",
     image: "wallet.png"
-  }
+  },
 ];
 
 const npcs = [
@@ -69,7 +69,11 @@ const npcs = [
       "장바구니를 비웠어요. 다시 골라 볼까요?",
       "초기화했어요. 새로 담아 보세요.",
       "좋아요. 다시 쇼핑을 시작해 볼까요?"
-    ]
+    ],
+    levelMessages: {
+      1: "레벨 1이에요. 물건 이름을 넣어 말해 보세요.",
+      2: "레벨 2예요. 한 개, 두 개, 세 개를 같이 연습해요."
+    }
   },
   {
     id: "clerk-female",
@@ -95,18 +99,24 @@ const npcs = [
       "장바구니를 비웠어요. 다시 시작해요!",
       "좋아요. 다시 물건을 골라 보세요.",
       "초기화했어요. 이번에는 무엇을 살까요?"
-    ]
+    ],
+    levelMessages: {
+      1: "레벨 1이에요. ‘사과를 사요’처럼 말해 보세요.",
+      2: "레벨 2예요. ‘사과 한 개를 사요’처럼 말해 보세요."
+    }
   }
 ];
 
 let cart = [];
 let currentNpc = null;
+let currentLevel = Number(localStorage.getItem("cartGameLevel")) || 1;
 
 const productGrid = document.getElementById("productGrid");
 const cartList = document.getElementById("cartList");
 const cartStatus = document.getElementById("cartStatus");
 const answerPreview = document.getElementById("answerPreview");
 const clearCartButton = document.getElementById("clearCartButton");
+const levelButtons = document.querySelectorAll(".level-button");
 
 const npcImage = document.getElementById("npcImage");
 const npcName = document.getElementById("npcName");
@@ -125,34 +135,6 @@ function getRandomItem(array) {
   return array[Math.floor(Math.random() * array.length)];
 }
 
-function renderRandomNpc() {
-  currentNpc = getRandomItem(npcs);
-
-  npcImage.src = makeCharacterPath(currentNpc.image);
-  npcImage.alt = `${currentNpc.name} 점원`;
-  npcName.textContent = currentNpc.name;
-  npcRole.textContent = currentNpc.role;
-  npcDialogue.textContent = getRandomItem(currentNpc.greetings);
-}
-
-function updateNpcDialogue(type) {
-  if (!currentNpc) return;
-
-  if (type === "empty") {
-    npcDialogue.textContent = getRandomItem(currentNpc.emptyMessages);
-    return;
-  }
-
-  if (type === "cart") {
-    npcDialogue.textContent = `${getRandomItem(currentNpc.cartMessages)} “${makeAnswerSentence()}”`;
-    return;
-  }
-
-  if (type === "clear") {
-    npcDialogue.textContent = getRandomItem(currentNpc.clearMessages);
-  }
-}
-
 function makePlaceholderImage(name) {
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="240" height="180" viewBox="0 0 240 180">
@@ -168,7 +150,88 @@ function makePlaceholderImage(name) {
   return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
 }
 
+function renderRandomNpc() {
+  if (!npcImage || !npcName || !npcRole || !npcDialogue) {
+    return;
+  }
+
+  currentNpc = getRandomItem(npcs);
+
+  npcImage.src = makeCharacterPath(currentNpc.image);
+  npcImage.alt = `${currentNpc.name} 점원`;
+  npcName.textContent = currentNpc.name;
+  npcRole.textContent = currentNpc.role;
+  npcDialogue.textContent = getRandomItem(currentNpc.greetings);
+
+  npcImage.addEventListener("error", () => {
+    npcImage.style.display = "none";
+  });
+}
+
+function updateNpcDialogue(type) {
+  if (!currentNpc || !npcDialogue) {
+    return;
+  }
+
+  if (type === "empty") {
+    npcDialogue.textContent = getRandomItem(currentNpc.emptyMessages);
+    return;
+  }
+
+  if (type === "cart") {
+    npcDialogue.textContent = `${getRandomItem(currentNpc.cartMessages)} “${makeAnswerSentence()}”`;
+    return;
+  }
+
+  if (type === "clear") {
+    npcDialogue.textContent = getRandomItem(currentNpc.clearMessages);
+    return;
+  }
+
+  if (type === "level") {
+    npcDialogue.textContent =
+      currentNpc.levelMessages[currentLevel] ||
+      "레벨을 바꿨어요. 다시 연습해 볼까요?";
+  }
+}
+
+function setupLevelButtons() {
+  if (!levelButtons || levelButtons.length === 0) {
+    return;
+  }
+
+  levelButtons.forEach((button) => {
+    const buttonLevel = Number(button.dataset.level);
+
+    button.classList.toggle("active", buttonLevel === currentLevel);
+
+    button.addEventListener("click", () => {
+      currentLevel = buttonLevel;
+      localStorage.setItem("cartGameLevel", String(currentLevel));
+
+      levelButtons.forEach((item) => {
+        item.classList.toggle(
+          "active",
+          Number(item.dataset.level) === currentLevel
+        );
+      });
+
+      renderCart();
+
+      if (cart.length > 0) {
+        updateNpcDialogue("cart");
+      } else {
+        updateNpcDialogue("level");
+      }
+    });
+  });
+}
+
 function renderProducts() {
+  if (!productGrid) {
+    return;
+  }
+
   productGrid.innerHTML = "";
 
   products.forEach((product) => {
@@ -214,7 +277,9 @@ function renderProducts() {
 function addToCart(productId) {
   const product = products.find((item) => item.id === productId);
 
-  if (!product) return;
+  if (!product) {
+    return;
+  }
 
   const existingItem = cart.find((item) => item.id === productId);
 
@@ -238,6 +303,10 @@ function clearCart() {
 }
 
 function renderCart() {
+  if (!cartList || !cartStatus || !answerPreview) {
+    return;
+  }
+
   cartList.innerHTML = "";
 
   if (cart.length === 0) {
@@ -295,11 +364,24 @@ function getObjectParticle(word) {
   return hasFinalConsonant(word) ? "을" : "를";
 }
 
-function makeAnswerSentence() {
-  if (cart.length === 0) {
-    return "아직 없어요.";
-  }
+function getNativeNumber(count) {
+  const nativeNumbers = {
+    1: "한",
+    2: "두",
+    3: "세",
+    4: "네",
+    5: "다섯",
+    6: "여섯",
+    7: "일곱",
+    8: "여덟",
+    9: "아홉",
+    10: "열"
+  };
 
+  return nativeNumbers[count] || String(count);
+}
+
+function makeLevelOneSentence() {
   if (cart.length === 1) {
     const item = cart[0];
     return `${item.name}${getObjectParticle(item.name)} 사요.`;
@@ -312,8 +394,49 @@ function makeAnswerSentence() {
   return `${phrases.join(", ")} 사요.`;
 }
 
-clearCartButton.addEventListener("click", clearCart);
+function makeLevelTwoSentence() {
+  if (cart.length === 1) {
+    const item = cart[0];
+    const countText = getNativeNumber(item.count);
 
+    return `${item.name} ${countText} 개를 사요.`;
+  }
+
+  const phrases = cart.map((item, index) => {
+    const countText = getNativeNumber(item.count);
+    const phrase = `${item.name} ${countText} 개`;
+
+    if (index === cart.length - 1) {
+      return `${phrase}를`;
+    }
+
+    return phrase;
+  });
+
+  return `${phrases.join(", ")} 사요.`;
+}
+
+function makeAnswerSentence() {
+  if (cart.length === 0) {
+    return "아직 없어요.";
+  }
+
+  if (currentLevel === 1) {
+    return makeLevelOneSentence();
+  }
+
+  if (currentLevel === 2) {
+    return makeLevelTwoSentence();
+  }
+
+  return makeLevelOneSentence();
+}
+
+if (clearCartButton) {
+  clearCartButton.addEventListener("click", clearCart);
+}
+
+setupLevelButtons();
 renderRandomNpc();
 renderProducts();
 renderCart();
