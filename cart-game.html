@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>장바구니 게임</title>
+
+  <link rel="stylesheet" href="./assets/css/cart-game.css" />
+</head>
+<body>
+  <div class="page-shell">
+    <a class="lobby-button" href="./index.html">← 로비로 돌아가기</a>
+
+    <header class="hero">
+      <p class="eyebrow">초급 한국어 활동</p>
+      <h1>장바구니 게임</h1>
+      <p class="hero-text">
+        상품의 + 버튼을 눌러 장바구니에 담고, “무엇을 사요?”에 대답해 보세요.
+      </p>
+    </header>
+
+    <main class="shop-layout">
+      <!-- 왼쪽: 상품 페이지 -->
+      <section class="product-panel" aria-labelledby="productTitle">
+        <div class="section-heading">
+          <h2 id="productTitle">상품</h2>
+          <p>+ 버튼을 눌러 장바구니에 담으세요.</p>
+        </div>
+
+        <div id="productGrid" class="product-grid">
+          <!-- JS에서 상품 카드 생성 -->
+        </div>
+      </section>
+
+      <!-- 오른쪽: 장바구니 -->
+      <aside class="cart-panel" aria-labelledby="cartTitle">
+        <div class="section-heading cart-heading">
+          <div>
+            <h2 id="cartTitle">장바구니</h2>
+            <p id="cartStatus">아직 담은 물건이 없어요.</p>
+          </div>
+
+          <button id="clearCartButton" class="clear-button" type="button">
+            비우기
+          </button>
+        </div>
+
+        <div id="cartList" class="cart-list empty">
+          <p class="empty-message">상품을 담아 보세요.</p>
+        </div>
+
+        <div class="speech-box">
+          <p class="speech-question">무엇을 사요?</p>
+          <p id="answerPreview" class="speech-answer">아직 없어요.</p>
+        </div>
+      </aside>
+    </main>
+  </div>
+
+  <script src="./assets/js/cart-game.js"></script>
+</body>
+</html>
