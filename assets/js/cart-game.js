@@ -6,49 +6,57 @@ const products = [
     id: "apple",
     name: "사과",
     image: "apple.png",
-    price: 1000
+    price: 1000,
+    unit: "개"
   },
   {
     id: "bread",
     name: "빵",
     image: "bread.png",
-    price: 1250
+    price: 1250,
+    unit: "개"
   },
   {
     id: "milk",
     name: "우유",
     image: "milk.png",
-    price: 720
+    price: 720,
+    unit: "병"
   },
   {
     id: "water",
     name: "물",
     image: "water.png",
-    price: 550
+    price: 550,
+    unit: "병"
   },
   {
     id: "book",
     name: "책",
     image: "book.png",
-    price: 800
+    price: 800,
+    unit: "권"
   },
   {
     id: "bag",
     name: "가방",
     image: "bag.png",
-    price: 15000
+    price: 15000,
+    unit: "개"
   },
   {
     id: "pen",
-    name: "펜",
+    name: "볼펜",
     image: "pen.png",
-    price: 740
+    price: 740,
+    unit: "자루"
   },
   {
     id: "wallet",
     name: "지갑",
     image: "wallet.png",
-    price: 12300
+    price: 12300,
+    unit: "개"
   }
 ];
 
@@ -282,14 +290,14 @@ function getNativeNumber(count) {
   return nativeNumbers[count] || String(count);
 }
 
-function getCountPhrase(count) {
+function getCountPhrase(count, unit = "개") {
   const countText = getNativeNumber(count);
 
   if (count <= 10) {
-    return `${countText} 개`;
+    return `${countText} ${unit}`;
   }
 
-  return `${countText}개`;
+  return `${count} ${unit}`;
 }
 
 function getTotalPrice() {
@@ -579,14 +587,19 @@ function makeLevelOneSentence() {
 function makeLevelTwoSentence() {
   if (cart.length === 1) {
     const item = cart[0];
-    return `${item.name} ${getCountPhrase(item.count)}를 사요.`;
+    const unit = item.unit || "개";
+    const countPhrase = getCountPhrase(item.count, unit);
+
+    return `${item.name} ${countPhrase}${getObjectParticle(unit)} 사요.`;
   }
 
   const phrases = cart.map((item, index) => {
-    const phrase = `${item.name} ${getCountPhrase(item.count)}`;
+    const unit = item.unit || "개";
+    const countPhrase = getCountPhrase(item.count, unit);
+    const phrase = `${item.name} ${countPhrase}`;
 
     if (index === cart.length - 1) {
-      return `${phrase}를`;
+      return `${phrase}${getObjectParticle(unit)}`;
     }
 
     return phrase;
