@@ -251,6 +251,13 @@ button:hover:not(:disabled),
   transform: translateY(-1px);
 }
 
+.lobby-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
 .option-row {
   flex-wrap: wrap;
   margin-bottom: 14px;
