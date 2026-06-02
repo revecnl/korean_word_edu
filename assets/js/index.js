@@ -61,6 +61,17 @@ const programCards = [
   buttonText: "프로그램 실행",
   href: "./cart-game.html"
 },
+  
+{
+  id: "calendar-game",
+  title: "날짜와 요일 연습",
+  description: "2026년 달력에서 날짜와 요일을 확인하고, 교사가 입력한 일정 메모를 보며 날짜·요일·일정 말하기를 연습하는 활동입니다.",
+  tags: ["날짜", "요일", "일정 말하기", "2026 달력"],
+  status: "live",
+  buttonText: "프로그램 실행",
+  href: "./calendar-game.html"
+},
+  
   {
     id: "new-program",
     title: "새 활동 프로그램",
