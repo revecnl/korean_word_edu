@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>하루 일정표 게임</title>
+  <link rel="stylesheet" href="./assets/css/daily-schedule.css" />
+</head>
+<body>
+  <main class="app-shell">
+    <header class="top-bar">
+      <div>
+        <p class="eyebrow">시간 표현 · 하루 일과</p>
+        <h1>하루 일정표 게임</h1>
+        <p class="subtitle">일정표를 보고 “몇 시 몇 분에 무엇을 해요?”를 말해 봐요.</p>
+      </div>
+      <a class="home-link" href="./index.html" aria-label="로비로 돌아가기">← 로비로 돌아가기</a>
+    </header>
+
+    <section class="level-panel" aria-label="레벨 선택">
+      <button class="level-btn is-active" data-level="1">Level 1<br /><span>몇 시</span></button>
+      <button class="level-btn" data-level="2">Level 2<br /><span>몇 시 몇 분</span></button>
+      <button class="level-btn" data-level="3">Level 3<br /><span>오전 / 오후</span></button>
+      <button class="level-btn" data-level="4">Level 4<br /><span>시간 → 일정</span></button>
+      <button class="level-btn" data-level="5">Level 5<br /><span>내 일정 만들기</span></button>
+    </section>
+
+    <section class="status-row" aria-live="polite">
+      <div class="status-card">
+        <span class="status-label">현재 레벨</span>
+        <strong id="levelTitle">Level 1. 몇 시</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">점수</span>
+        <strong><span id="scoreText">0</span>점</strong>
+      </div>
+      <div class="status-card">
+        <span class="status-label">문제</span>
+        <strong><span id="roundText">1</span> / 10</strong>
+      </div>
+    </section>
+
+    <section id="quizArea" class="game-grid">
+      <article class="schedule-card">
+        <div class="section-title-row">
+          <h2>오늘의 일정표</h2>
+          <button id="shuffleBtn" class="ghost-btn" type="button">일정 바꾸기</button>
+        </div>
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>시간</th>
+              <th>일정</th>
+            </tr>
+          </thead>
+          <tbody id="scheduleBody"></tbody>
+        </table>
+        <p class="hint-text" id="levelHint">일정을 보고 맞는 시간을 골라요.</p>
+      </article>
+
+      <article class="question-card">
+        <p class="question-label">문제</p>
+        <h2 id="questionText">아침 식사는 몇 시에 해요?</h2>
+        <div id="answerOptions" class="answer-options"></div>
+        <div id="feedbackBox" class="feedback-box" aria-live="polite"></div>
+        <div class="control-row">
+          <button id="nextBtn" class="primary-btn" type="button">다음 문제</button>
+          <button id="restartBtn" class="secondary-btn" type="button">처음부터</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="makerArea" class="maker-area is-hidden">
+      <article class="maker-card">
+        <div class="section-title-row">
+          <h2>내 하루 일정 만들기</h2>
+          <button id="loadSampleBtn" class="ghost-btn" type="button">예시 일정 불러오기</button>
+        </div>
+        <p class="hint-text">활동을 먼저 고르고, 시간을 누르면 내 일정표에 들어가요.</p>
+
+        <div class="maker-columns">
+          <div>
+            <h3>활동 카드</h3>
+            <div id="activityCards" class="chip-grid"></div>
+          </div>
+          <div>
+            <h3>시간 카드</h3>
+            <div id="timeCards" class="chip-grid"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="maker-card">
+        <div class="section-title-row">
+          <h2>내 일정표</h2>
+          <button id="clearMyScheduleBtn" class="ghost-btn danger" type="button">비우기</button>
+        </div>
+        <table class="schedule-table">
+          <thead>
+            <tr>
+              <th>시간</th>
+              <th>일정</th>
+            </tr>
+          </thead>
+          <tbody id="myScheduleBody"></tbody>
+        </table>
+        <button id="makeSentencesBtn" class="primary-btn full-width" type="button">말하기 문장 보기</button>
+        <div id="sentenceBox" class="sentence-box"></div>
+      </article>
+    </section>
+  </main>
+
+  <script src="./assets/js/daily-schedule.js"></script>
+</body>
+</html>
