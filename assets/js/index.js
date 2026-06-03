@@ -71,6 +71,16 @@ const programCards = [
   buttonText: "프로그램 실행",
   href: "./calendar-game.html"
 },
+
+{
+  id: "daily-schedule",
+  title: "날짜와 요일 연습",
+  description: "일정표를 보고 시간과 하루 일과를 말하는 연습 게임입니다. 몇 시, 몇 시 몇 분, 오전/오후 표현을 단계별로 익힐 수 있습니다.",,
+  tags: ["시간", "일정 말하기"],
+  status: "live",
+  buttonText: "프로그램 실행",
+  href: "./daily-schedule.html"
+},
   
   {
     id: "new-program",
