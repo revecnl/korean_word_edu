@@ -81,6 +81,16 @@ const programCards = [
   buttonText: "프로그램 실행",
   href: "./daily-schedule.html"
 },
+
+{
+  id: "hobby-frequency-wheel",
+  title: "빈도 말하기 연습",
+  description: "이름, 취미/행동, 빈도를 돌림판으로 뽑아 문장을 만드는 말하기 연습입니다. 항상, 자주, 가끔과 별로 안, 거의 안, 전혀 안 표현을 익히고 이유까지 말해 볼 수 있습니다",
+  tags: ["취미", "빈도 표현", "말하기"],
+  status: "live",
+  buttonText: "프로그램 실행",
+  href: "./hobby-frequency-wheel.html"
+},
   
   {
     id: "new-program",
