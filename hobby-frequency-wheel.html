@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>취미 + 빈도 표현 돌림판</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <a class="lobby-btn" href="https://revecnl.github.io/korean_word_edu/">← 로비로 돌아가기</a>
+
+      <p class="eyebrow">취미 + 빈도 표현</p>
+      <h1>돌림판을 돌려 문장을 만들어 보세요</h1>
+      <p class="hero-desc">
+        이름, 취미/행동, 빈도를 랜덤으로 뽑고 문장을 말해 봅니다.
+        이유 카드를 고르면 이유까지 이어서 말할 수 있어요.
+      </p>
+
+      <div class="rules">
+        <div class="rule-box">
+          <strong>긍정 빈도</strong>
+          <p>항상 / 자주 / 가끔 → 그대로 사용해요.<br />예: 자전거를 자주 타요.</p>
+        </div>
+        <div class="rule-box">
+          <strong>부정 빈도</strong>
+          <p>별로 / 거의 / 전혀 → 반드시 <b>안</b>을 붙여요.<br />예: 노래를 거의 안 불러요.</p>
+        </div>
+      </div>
+    </header>
+
+    <div class="layout">
+      <section class="panel">
+        <h2 class="section-title">🎡 돌림판</h2>
+
+        <div class="wheel-grid">
+          <article class="wheel-card">
+            <div>
+              <div class="wheel-label">
+                <span>이름</span>
+                <span class="wheel-icon">👤</span>
+              </div>
+              <div id="nameWheel" class="wheel-screen">?</div>
+            </div>
+            <div class="wheel-sub">캐릭터 이름</div>
+          </article>
+
+          <article class="wheel-card">
+            <div>
+              <div class="wheel-label">
+                <span>취미/행동</span>
+                <span class="wheel-icon">🎨</span>
+              </div>
+              <div id="actionWheel" class="wheel-screen">?</div>
+            </div>
+            <div class="wheel-sub">동사 원형</div>
+          </article>
+
+          <article class="wheel-card">
+            <div>
+              <div class="wheel-label">
+                <span>빈도</span>
+                <span class="wheel-icon">📅</span>
+              </div>
+              <div id="frequencyWheel" class="wheel-screen">?</div>
+            </div>
+            <div class="wheel-sub">항상 / 자주 / 가끔 / 별로 / 거의 / 전혀</div>
+          </article>
+        </div>
+
+        <div class="controls">
+          <button id="spinBtn" class="btn btn-primary">돌리기</button>
+          <button id="hideSentenceBtn" class="btn btn-secondary">문장 숨기기</button>
+          <button id="reasonModeBtn" class="btn btn-light">이유 모드: 켜짐</button>
+          <button id="resetBtn" class="btn btn-light">초기화</button>
+        </div>
+
+        <div class="footer-tip">
+          수업에서는 먼저 <b>문장 숨기기</b>를 누른 뒤 학생이 직접 말하게 하고,
+          그 다음 <b>문장 보기</b>로 확인하면 좋아요.
+        </div>
+
+        <section class="reason-panel" id="reasonPanel">
+          <div class="reason-head">
+            <div>
+              <h2 class="section-title reason-title">💬 왜요?</h2>
+              <p>빈도에 맞는 이유 카드가 자동으로 바뀝니다.</p>
+            </div>
+          </div>
+
+          <div id="reasonCards" class="reason-cards"></div>
+
+          <div class="final-box">
+            <p id="finalSentence">이유를 고르면 최종 문장이 나와요.</p>
+          </div>
+        </section>
+      </section>
+
+      <aside class="panel result-card">
+        <h2 class="section-title">✨ 결과</h2>
+
+        <div class="chips">
+          <span class="chip">이름: <b id="chipName">?</b></span>
+          <span class="chip">행동: <b id="chipAction">?</b></span>
+          <span class="chip">빈도: <b id="chipFrequency">?</b></span>
+        </div>
+
+        <div id="visual" class="visual">
+          <img id="resultImage" src="" alt="" />
+          <div class="fallback-art">
+            <div id="emojiArt" class="emoji-art">🎲</div>
+            <div id="fallbackTitle" class="fallback-title">돌림판을 돌려 보세요</div>
+            <div id="fallbackDesc" class="fallback-desc">결과 이미지가 여기에 표시됩니다</div>
+          </div>
+        </div>
+
+        <div class="sentence-box">
+          <p class="sentence-label">자동 문장</p>
+          <p id="sentence" class="sentence">아직 문장이 없어요.</p>
+        </div>
+
+        <div id="hint" class="hint"></div>
+
+        <section>
+          <h2 class="section-title history-title">🧾 최근 문장</h2>
+          <div id="historyList" class="history-list">
+            <div class="empty">아직 기록이 없어요.</div>
+          </div>
+        </section>
+      </aside>
+    </div>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
